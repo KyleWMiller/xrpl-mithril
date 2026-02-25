@@ -1,0 +1,17 @@
+[package]
+name = "xrpl-wallet"
+version = "0.1.0-alpha.1"
+description = "Key generation, signing, and seed management for the XRP Ledger"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+xrpl-types = { workspace = true }
+thiserror = { workspace = true }
+
+[lints]
+workspace = true

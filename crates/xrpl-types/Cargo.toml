@@ -1,0 +1,21 @@
+[package]
+name = "xrpl-types"
+version = "0.1.0-alpha.1"
+description = "Core protocol types for the XRP Ledger (Amount, AccountId, Hash, Currency)"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+hex = { workspace = true }
+bs58 = { workspace = true }
+derive_more = { workspace = true }
+
+[lints]
+workspace = true

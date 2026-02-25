@@ -1,0 +1,72 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/xrpl-types",
+    "crates/xrpl-codec",
+    "crates/xrpl-models",
+    "crates/xrpl-wallet",
+    "crates/xrpl-client",
+    "crates/xrpl-tx",
+    "crates/xrpl-oxide",
+]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.85"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/xrpl-oxide/xrpl-oxide"
+keywords = ["xrpl", "xrp", "blockchain", "crypto", "ledger"]
+categories = ["cryptography::cryptocurrencies", "api-bindings"]
+
+[workspace.dependencies]
+# Internal crates
+xrpl-types = { path = "crates/xrpl-types" }
+xrpl-codec = { path = "crates/xrpl-codec" }
+xrpl-models = { path = "crates/xrpl-models" }
+xrpl-wallet = { path = "crates/xrpl-wallet" }
+xrpl-client = { path = "crates/xrpl-client" }
+xrpl-tx = { path = "crates/xrpl-tx" }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Crypto — Pure Rust (default backend)
+k256 = { version = "0.13", features = ["ecdsa-core", "sha256"] }
+ed25519-dalek = { version = "2", features = ["rand_core"] }
+sha2 = "0.10"
+ripemd = "0.1"
+rand = "0.10"
+bs58 = { version = "0.5", features = ["check"] }
+
+# Crypto — Native C backend (opt-in via native-crypto feature)
+secp256k1 = { version = "0.31", features = ["global-context"] }
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+
+# Networking (rustls, not OpenSSL)
+reqwest = { version = "0.13", default-features = false, features = ["json", "rustls-tls"] }
+tokio-tungstenite = { version = "0.28", features = ["rustls-tls-webpki-roots"] }
+futures = "0.3"
+
+# Error handling
+thiserror = "2"
+
+# Utilities
+hex = "0.4"
+indexmap = { version = "2", features = ["serde"] }
+tracing = "0.1"
+derive_more = { version = "2.1.1", features = ["display", "from"] }
+bitflags = "2"
+
+# Testing
+proptest = "1"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
