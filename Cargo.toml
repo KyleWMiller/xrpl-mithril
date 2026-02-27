@@ -38,6 +38,7 @@ sha2 = "0.10"
 ripemd = "0.1"
 rand = "0.10"
 bs58 = { version = "0.5", features = ["check"] }
+zeroize = { version = "1", features = ["derive"] }
 
 # Crypto — Native C backend (opt-in via native-crypto feature)
 secp256k1 = { version = "0.31", features = ["global-context"] }

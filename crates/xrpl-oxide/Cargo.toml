@@ -9,6 +9,11 @@ repository.workspace = true
 keywords.workspace = true
 categories.workspace = true
 
+[features]
+default = ["pure-rust-crypto"]
+pure-rust-crypto = ["xrpl-wallet/pure-rust-crypto"]
+native-crypto = ["xrpl-wallet/native-crypto"]
+
 [dependencies]
 xrpl-types = { workspace = true }
 xrpl-codec = { workspace = true }
