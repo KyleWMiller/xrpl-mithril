@@ -47,7 +47,7 @@ secp256k1 = { version = "0.31", features = ["global-context"] }
 tokio = { version = "1", features = ["full"] }
 
 # Networking (rustls, not OpenSSL)
-reqwest = { version = "0.13", default-features = false, features = ["json", "rustls-tls"] }
+reqwest = { version = "0.13", features = ["json"] }
 tokio-tungstenite = { version = "0.28", features = ["rustls-tls-webpki-roots"] }
 futures = "0.3"
 

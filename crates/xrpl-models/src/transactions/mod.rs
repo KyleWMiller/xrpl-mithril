@@ -17,6 +17,7 @@ pub mod oracle;
 pub mod payment;
 pub mod payment_channel;
 pub mod trust_set;
+pub mod wrapper;
 pub mod xchain;
 
 use serde::{Deserialize, Serialize};

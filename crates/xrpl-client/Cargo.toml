@@ -13,6 +13,13 @@ categories.workspace = true
 xrpl-types = { workspace = true }
 xrpl-models = { workspace = true }
 thiserror = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+reqwest = { workspace = true }
+tokio = { workspace = true }
+tokio-tungstenite = { workspace = true }
+futures = { workspace = true }
+tracing = { workspace = true }
 
 [lints]
 workspace = true

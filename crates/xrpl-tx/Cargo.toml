@@ -12,7 +12,14 @@ categories.workspace = true
 [dependencies]
 xrpl-types = { workspace = true }
 xrpl-models = { workspace = true }
+xrpl-client = { workspace = true }
+xrpl-wallet = { workspace = true }
+xrpl-codec = { workspace = true }
 thiserror = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
 
 [lints]
 workspace = true

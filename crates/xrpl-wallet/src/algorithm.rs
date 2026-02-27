@@ -146,7 +146,7 @@ pub(crate) mod secp256k1_impl {
         let sk = SecretKey::from_byte_array(*secret)
             .map_err(|e| WalletError::InvalidSecretKey(e.to_string()))?;
         let msg = Message::from_digest(*hash);
-        let sig = secp.sign_ecdsa(&msg, &sk);
+        let sig = secp.sign_ecdsa(msg, &sk);
         Ok(sig.serialize_der().to_vec())
     }
 
@@ -162,7 +162,7 @@ pub(crate) mod secp256k1_impl {
         let msg = Message::from_digest(*hash);
         let sig = secp256k1::ecdsa::Signature::from_der(signature)
             .map_err(|e| WalletError::InvalidSignature(e.to_string()))?;
-        secp.verify_ecdsa(&msg, &sig, &pk)
+        secp.verify_ecdsa(msg, &sig, &pk)
             .map_err(|e| WalletError::VerificationFailed(e.to_string()))
     }
 }
