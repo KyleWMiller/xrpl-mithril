@@ -1,0 +1,25 @@
+[package]
+name = "xrpl-mithril-client"
+version = "0.3.0"
+description = "Network clients (JSON-RPC, WebSocket) for the XRP Ledger"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+xrpl-mithril-types = { workspace = true }
+xrpl-mithril-models = { workspace = true }
+thiserror = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+reqwest = { workspace = true }
+tokio = { workspace = true }
+tokio-tungstenite = { workspace = true }
+futures = { workspace = true }
+tracing = { workspace = true }
+
+[lints]
+workspace = true

@@ -8,8 +8,8 @@
 
 use futures::StreamExt;
 
-use xrpl_mithril::xrpl_client::{Client, WebSocketClient};
-use xrpl_mithril::xrpl_models::requests::subscription::SubscribeRequest;
+use xrpl_mithril::client::{Client, WebSocketClient};
+use xrpl_mithril::models::requests::subscription::SubscribeRequest;
 
 const TESTNET_WS: &str = "wss://s.altnet.rippletest.net:51233";
 

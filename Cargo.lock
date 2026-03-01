@@ -2573,8 +2573,25 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9edde0db4769d2dc68579893f2306b26c6ecfbe0ef499b013d731b7b9247e0b9"
 
 [[package]]
-name = "xrpl-client"
-version = "0.1.0-alpha.1"
+name = "xrpl-mithril"
+version = "0.5.0"
+dependencies = [
+ "futures",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tokio",
+ "xrpl-mithril-client",
+ "xrpl-mithril-codec",
+ "xrpl-mithril-models",
+ "xrpl-mithril-tx",
+ "xrpl-mithril-types",
+ "xrpl-mithril-wallet",
+]
+
+[[package]]
+name = "xrpl-mithril-client"
+version = "0.3.0"
 dependencies = [
  "futures",
  "reqwest",
@@ -2584,13 +2601,13 @@ dependencies = [
  "tokio",
  "tokio-tungstenite",
  "tracing",
- "xrpl-models",
- "xrpl-types",
+ "xrpl-mithril-models",
+ "xrpl-mithril-types",
 ]
 
 [[package]]
-name = "xrpl-codec"
-version = "0.1.0-alpha.1"
+name = "xrpl-mithril-codec"
+version = "0.3.0"
 dependencies = [
  "bs58",
  "hex",
@@ -2599,57 +2616,40 @@ dependencies = [
  "serde_json",
  "sha2",
  "thiserror 2.0.18",
- "xrpl-types",
+ "xrpl-mithril-types",
 ]
 
 [[package]]
-name = "xrpl-mithril"
-version = "0.1.0-alpha.1"
-dependencies = [
- "futures",
- "reqwest",
- "serde",
- "serde_json",
- "tokio",
- "xrpl-client",
- "xrpl-codec",
- "xrpl-models",
- "xrpl-tx",
- "xrpl-types",
- "xrpl-wallet",
-]
-
-[[package]]
-name = "xrpl-models"
-version = "0.1.0-alpha.1"
+name = "xrpl-mithril-models"
+version = "0.4.0"
 dependencies = [
  "bitflags",
  "serde",
  "serde_json",
  "thiserror 2.0.18",
- "xrpl-codec",
- "xrpl-types",
+ "xrpl-mithril-codec",
+ "xrpl-mithril-types",
 ]
 
 [[package]]
-name = "xrpl-tx"
-version = "0.1.0-alpha.1"
+name = "xrpl-mithril-tx"
+version = "0.4.0"
 dependencies = [
  "serde",
  "serde_json",
  "thiserror 2.0.18",
  "tokio",
  "tracing",
- "xrpl-client",
- "xrpl-codec",
- "xrpl-models",
- "xrpl-types",
- "xrpl-wallet",
+ "xrpl-mithril-client",
+ "xrpl-mithril-codec",
+ "xrpl-mithril-models",
+ "xrpl-mithril-types",
+ "xrpl-mithril-wallet",
 ]
 
 [[package]]
-name = "xrpl-types"
-version = "0.1.0-alpha.1"
+name = "xrpl-mithril-types"
+version = "0.1.0"
 dependencies = [
  "bs58",
  "derive_more",
@@ -2660,8 +2660,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "xrpl-wallet"
-version = "0.1.0-alpha.1"
+name = "xrpl-mithril-wallet"
+version = "0.5.0"
 dependencies = [
  "bs58",
  "ed25519-dalek",
@@ -2674,8 +2674,8 @@ dependencies = [
  "serde_json",
  "sha2",
  "thiserror 2.0.18",
- "xrpl-codec",
- "xrpl-types",
+ "xrpl-mithril-codec",
+ "xrpl-mithril-types",
  "zeroize",
 ]
 

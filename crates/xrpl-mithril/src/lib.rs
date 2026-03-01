@@ -18,12 +18,12 @@
 //! Send 10 XRP on testnet:
 //!
 //! ```no_run
-//! use xrpl_mithril::xrpl_client::JsonRpcClient;
-//! use xrpl_mithril::xrpl_tx::builder::PaymentBuilder;
-//! use xrpl_mithril::xrpl_tx::autofill::autofill;
-//! use xrpl_mithril::xrpl_tx::{sign_transaction, submit_and_wait};
-//! use xrpl_mithril::xrpl_types::{Amount, XrpAmount};
-//! use xrpl_mithril::xrpl_wallet::{Algorithm, Wallet};
+//! use xrpl_mithril::client::JsonRpcClient;
+//! use xrpl_mithril::tx::builder::PaymentBuilder;
+//! use xrpl_mithril::tx::autofill::autofill;
+//! use xrpl_mithril::tx::{sign_transaction, submit_and_wait};
+//! use xrpl_mithril::types::{Amount, XrpAmount};
+//! use xrpl_mithril::wallet::{Algorithm, Wallet};
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
 //! let sender = Wallet::generate(Algorithm::Ed25519)?;
@@ -47,11 +47,11 @@
 //! Or use the one-liner convenience function:
 //!
 //! ```no_run
-//! use xrpl_mithril::xrpl_client::JsonRpcClient;
-//! use xrpl_mithril::xrpl_tx::builder::PaymentBuilder;
-//! use xrpl_mithril::xrpl_tx::submit_transaction;
-//! use xrpl_mithril::xrpl_types::{Amount, XrpAmount};
-//! use xrpl_mithril::xrpl_wallet::{Algorithm, Wallet};
+//! use xrpl_mithril::client::JsonRpcClient;
+//! use xrpl_mithril::tx::builder::PaymentBuilder;
+//! use xrpl_mithril::tx::submit_transaction;
+//! use xrpl_mithril::types::{Amount, XrpAmount};
+//! use xrpl_mithril::wallet::{Algorithm, Wallet};
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
 //! let client = JsonRpcClient::new("https://s.altnet.rippletest.net:51234")?;
@@ -74,14 +74,14 @@
 //!
 //! ```toml
 //! [dependencies]
-//! xrpl-mithril = "0.1.0-alpha.1"
+//! xrpl-mithril = "0.5.0"
 //! ```
 //!
 //! **With native cryptography for maximum secp256k1 performance:**
 //!
 //! ```toml
 //! [dependencies]
-//! xrpl-mithril = { version = "0.1.0-alpha.1", features = ["native-crypto"] }
+//! xrpl-mithril = { version = "0.5.0", features = ["native-crypto"] }
 //! ```
 //!
 //! # Feature Flags
@@ -97,8 +97,8 @@
 //! # Wallet Operations
 //!
 //! ```
-//! use xrpl_mithril::xrpl_wallet::{Algorithm, Wallet};
-//! use xrpl_mithril::xrpl_wallet::address::{encode_x_address, decode_x_address};
+//! use xrpl_mithril::wallet::{Algorithm, Wallet};
+//! use xrpl_mithril::wallet::address::{encode_x_address, decode_x_address};
 //!
 //! // Generate a random wallet
 //! let wallet = Wallet::generate(Algorithm::Ed25519).unwrap();
@@ -120,14 +120,14 @@
 //! # Transaction Builders
 //!
 //! Fluent builders are provided for common transaction types. Every builder
-//! produces an [`xrpl_models::transactions::wrapper::UnsignedTransaction`]
+//! produces an [`models::transactions::wrapper::UnsignedTransaction`]
 //! ready for autofill and signing.
 //!
 //! ```
-//! use xrpl_mithril::xrpl_tx::builder::{
+//! use xrpl_mithril::tx::builder::{
 //!     PaymentBuilder, TrustSetBuilder, OfferCreateBuilder, EscrowCreateBuilder,
 //! };
-//! use xrpl_mithril::xrpl_types::*;
+//! use xrpl_mithril::types::*;
 //!
 //! # fn example() -> Result<(), Box<dyn std::error::Error>> {
 //! // XRP payment
@@ -175,8 +175,8 @@
 //!
 //! ```no_run
 //! use futures::StreamExt;
-//! use xrpl_mithril::xrpl_client::{Client, WebSocketClient};
-//! use xrpl_mithril::xrpl_models::requests::subscription::SubscribeRequest;
+//! use xrpl_mithril::client::{Client, WebSocketClient};
+//! use xrpl_mithril::models::requests::subscription::SubscribeRequest;
 //!
 //! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
 //! let client = WebSocketClient::connect("wss://s.altnet.rippletest.net:51233").await?;
@@ -204,7 +204,7 @@
 //! Serialize transactions to the XRPL binary wire format and back:
 //!
 //! ```
-//! use xrpl_mithril::xrpl_codec::{serializer, deserializer};
+//! use xrpl_mithril::codec::{serializer, deserializer};
 //!
 //! let tx = serde_json::json!({
 //!     "TransactionType": "Payment",
@@ -225,8 +225,8 @@
 //! # Multi-Signature Transactions
 //!
 //! ```
-//! use xrpl_mithril::xrpl_wallet::{Wallet, Algorithm};
-//! use xrpl_mithril::xrpl_wallet::signer::{multi_sign, combine_signatures};
+//! use xrpl_mithril::wallet::{Wallet, Algorithm};
+//! use xrpl_mithril::wallet::signer::{multi_sign, combine_signatures};
 //!
 //! # fn example() -> Result<(), Box<dyn std::error::Error>> {
 //! let signer1 = Wallet::generate(Algorithm::Ed25519)?;
@@ -253,8 +253,8 @@
 //! # Signing and Verification
 //!
 //! ```
-//! use xrpl_mithril::xrpl_wallet::{Wallet, Algorithm};
-//! use xrpl_mithril::xrpl_wallet::signer::sign;
+//! use xrpl_mithril::wallet::{Wallet, Algorithm};
+//! use xrpl_mithril::wallet::signer::sign;
 //!
 //! # fn example() -> Result<(), Box<dyn std::error::Error>> {
 //! let wallet = Wallet::from_seed_encoded("snoPBrXtMeMyMHUVTgbuqAfg1SUTb")?;
@@ -282,7 +282,7 @@
 //! Core protocol types enforce validity at construction time:
 //!
 //! ```
-//! use xrpl_mithril::xrpl_types::*;
+//! use xrpl_mithril::types::*;
 //!
 //! // Amounts
 //! let xrp = XrpAmount::from_drops(1_000_000).unwrap();
@@ -308,14 +308,14 @@
 //!
 //! # Crate Organization
 //!
-//! | Crate | Purpose |
-//! |-------|---------|
-//! | [`xrpl_types`] | Core protocol types (amounts, accounts, hashes, currencies) |
-//! | [`xrpl_codec`] | Binary serialization/deserialization (XRPL wire format) |
-//! | [`xrpl_models`] | 50+ transaction types, 17 ledger entry types, request/response types |
-//! | [`xrpl_wallet`] | Key generation, signing, seed/address encoding |
-//! | [`xrpl_client`] | JSON-RPC and WebSocket clients (rustls TLS, no OpenSSL) |
-//! | [`xrpl_tx`] | Transaction builders, autofill, reliable submission |
+//! | Crate | Re-export | Purpose |
+//! |-------|-----------|---------|
+//! | `xrpl-mithril-types` | [`types`] | Core protocol types (amounts, accounts, hashes, currencies) |
+//! | `xrpl-mithril-codec` | [`codec`] | Binary serialization/deserialization (XRPL wire format) |
+//! | `xrpl-mithril-models` | [`models`] | 50+ transaction types, 17 ledger entry types, request/response types |
+//! | `xrpl-mithril-wallet` | [`wallet`] | Key generation, signing, seed/address encoding |
+//! | `xrpl-mithril-client` | [`client`] | JSON-RPC and WebSocket clients (rustls TLS, no OpenSSL) |
+//! | `xrpl-mithril-tx` | [`tx`] | Transaction builders, autofill, reliable submission |
 //!
 //! Depend on `xrpl-mithril` to get everything, or pick individual crates
 //! for a smaller dependency footprint. All crates enforce
@@ -323,9 +323,9 @@
 
 #![forbid(unsafe_code)]
 
-pub use xrpl_types;
-pub use xrpl_codec;
-pub use xrpl_models;
-pub use xrpl_wallet;
-pub use xrpl_client;
-pub use xrpl_tx;
+pub use xrpl_mithril_types as types;
+pub use xrpl_mithril_codec as codec;
+pub use xrpl_mithril_models as models;
+pub use xrpl_mithril_wallet as wallet;
+pub use xrpl_mithril_client as client;
+pub use xrpl_mithril_tx as tx;

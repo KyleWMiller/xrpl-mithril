@@ -3,8 +3,8 @@
 //! These tests require network access to the XRPL Testnet.
 //! Run with: `cargo test -- --ignored`
 
-use xrpl_client::{Client, JsonRpcClient, WebSocketClient};
-use xrpl_models::requests::{
+use xrpl_mithril_client::{Client, JsonRpcClient, WebSocketClient};
+use xrpl_mithril_models::requests::{
     account::AccountInfoRequest,
     ledger::{LedgerClosedRequest, LedgerCurrentRequest, LedgerRequest},
     server::{FeeRequest, PingRequest, ServerInfoRequest},

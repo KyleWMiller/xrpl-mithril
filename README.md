@@ -22,12 +22,12 @@ xrpl-mithril is a Rust-native SDK targeting the 2026 XRPL protocol surface -- ri
 Send 10 XRP on testnet:
 
 ```rust
-use xrpl_mithril::xrpl_client::JsonRpcClient;
-use xrpl_mithril::xrpl_tx::builder::PaymentBuilder;
-use xrpl_mithril::xrpl_tx::autofill::autofill;
-use xrpl_mithril::xrpl_tx::{sign_transaction, submit_and_wait};
-use xrpl_mithril::xrpl_types::{Amount, XrpAmount};
-use xrpl_mithril::xrpl_wallet::{Algorithm, Wallet};
+use xrpl_mithril::client::JsonRpcClient;
+use xrpl_mithril::tx::builder::PaymentBuilder;
+use xrpl_mithril::tx::autofill::autofill;
+use xrpl_mithril::tx::{sign_transaction, submit_and_wait};
+use xrpl_mithril::types::{Amount, XrpAmount};
+use xrpl_mithril::wallet::{Algorithm, Wallet};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -64,14 +64,14 @@ See [17 runnable examples](examples/) covering payments, escrow, AMM, MPTs, NFTs
 
 ```toml
 [dependencies]
-xrpl-mithril = "0.1.0-alpha.1"
+xrpl-mithril = "0.5.0"
 ```
 
 **With native cryptography backend (for maximum secp256k1 performance):**
 
 ```toml
 [dependencies]
-xrpl-mithril = { version = "0.1.0-alpha.1", features = ["native-crypto"] }
+xrpl-mithril = { version = "0.5.0", features = ["native-crypto"] }
 ```
 
 By default, xrpl-mithril uses pure Rust cryptography (`k256` + `ed25519-dalek`). The `native-crypto` feature swaps in `libsecp256k1` via the `secp256k1` crate for ~2x faster ECDSA signing and verification. Both backends expose the identical API -- switching is a `Cargo.toml` change, not a code change.
@@ -80,15 +80,15 @@ By default, xrpl-mithril uses pure Rust cryptography (`k256` + `ed25519-dalek`).
 
 For a smaller dependency footprint, depend on the crates you need:
 
-| Crate | Purpose | Standalone |
-|-------|---------|:----------:|
-| `xrpl-types` | Core protocol types (AccountId, Amount, Hash, CurrencyCode) | Yes |
-| `xrpl-codec` | Binary serialization/deserialization (rippled wire format) | Yes |
-| `xrpl-models` | 50+ transaction types, 17 ledger entry types | Yes |
-| `xrpl-wallet` | Key generation, signing, address encoding | Yes |
-| `xrpl-client` | JSON-RPC + WebSocket clients (rustls TLS) | Yes |
-| `xrpl-tx` | Transaction building, autofill, reliable submission | No |
-| `xrpl-mithril` | Facade: re-exports everything | -- |
+| Crate | Re-export | Purpose | Standalone |
+|-------|-----------|---------|:----------:|
+| `xrpl-mithril-types` | `xrpl_mithril::types` | Core protocol types (AccountId, Amount, Hash, CurrencyCode) | Yes |
+| `xrpl-mithril-codec` | `xrpl_mithril::codec` | Binary serialization/deserialization (rippled wire format) | Yes |
+| `xrpl-mithril-models` | `xrpl_mithril::models` | 50+ transaction types, 17 ledger entry types | Yes |
+| `xrpl-mithril-wallet` | `xrpl_mithril::wallet` | Key generation, signing, address encoding | Yes |
+| `xrpl-mithril-client` | `xrpl_mithril::client` | JSON-RPC + WebSocket clients (rustls TLS) | Yes |
+| `xrpl-mithril-tx` | `xrpl_mithril::tx` | Transaction building, autofill, reliable submission | No |
+| `xrpl-mithril` | — | Facade: re-exports everything | — |
 
 ## Why xrpl-mithril?
 
@@ -201,8 +201,8 @@ All examples connect to XRPL testnet and require network access. Fund test walle
 
 ```rust
 use futures::StreamExt;
-use xrpl_mithril::xrpl_client::{Client, WebSocketClient};
-use xrpl_mithril::xrpl_models::requests::subscription::SubscribeRequest;
+use xrpl_mithril::client::{Client, WebSocketClient};
+use xrpl_mithril::models::requests::subscription::SubscribeRequest;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

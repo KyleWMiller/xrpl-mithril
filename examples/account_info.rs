@@ -6,11 +6,11 @@
 //! Run: `cargo run -p xrpl-mithril --example account_info`
 //! Requires: Network access to XRPL testnet
 
-use xrpl_mithril::xrpl_client::{Client, JsonRpcClient};
-use xrpl_mithril::xrpl_models::requests::account::{AccountInfoRequest, AccountLinesRequest};
-use xrpl_mithril::xrpl_models::requests::server::ServerInfoRequest;
-use xrpl_mithril::xrpl_models::requests::LedgerSpecifier;
-use xrpl_mithril::xrpl_types::AccountId;
+use xrpl_mithril::client::{Client, JsonRpcClient};
+use xrpl_mithril::models::requests::account::{AccountInfoRequest, AccountLinesRequest};
+use xrpl_mithril::models::requests::server::ServerInfoRequest;
+use xrpl_mithril::models::requests::LedgerSpecifier;
+use xrpl_mithril::types::AccountId;
 
 const TESTNET_RPC: &str = "https://s.altnet.rippletest.net:51234";
 
@@ -44,7 +44,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .request(AccountInfoRequest {
             account,
             ledger_index: Some(LedgerSpecifier::Named(
-                xrpl_mithril::xrpl_models::requests::LedgerShortcut::Validated,
+                xrpl_mithril::models::requests::LedgerShortcut::Validated,
             )),
             queue: None,
             signer_lists: None,

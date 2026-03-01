@@ -6,19 +6,19 @@
 //! Run: `cargo run -p xrpl-mithril --example credentials`
 //! Requires: Network access to XRPL testnet with Credentials amendment active
 
-use xrpl_mithril::xrpl_client::{Client, JsonRpcClient};
-use xrpl_mithril::xrpl_models::requests::account::AccountObjectsRequest;
-use xrpl_mithril::xrpl_models::requests::{LedgerShortcut, LedgerSpecifier};
-use xrpl_mithril::xrpl_models::transactions::credential::{
+use xrpl_mithril::client::{Client, JsonRpcClient};
+use xrpl_mithril::models::requests::account::AccountObjectsRequest;
+use xrpl_mithril::models::requests::{LedgerShortcut, LedgerSpecifier};
+use xrpl_mithril::models::transactions::credential::{
     CredentialAccept, CredentialCreate, CredentialDelete,
 };
-use xrpl_mithril::xrpl_models::transactions::wrapper::UnsignedTransaction;
-use xrpl_mithril::xrpl_models::transactions::{Transaction, TransactionCommon};
-use xrpl_mithril::xrpl_tx::autofill::autofill;
-use xrpl_mithril::xrpl_tx::submit::submit_and_wait;
-use xrpl_mithril::xrpl_tx::{sign_transaction, TransactionResult};
-use xrpl_mithril::xrpl_types::{AccountId, Amount, Blob, XrpAmount};
-use xrpl_mithril::xrpl_wallet::{Algorithm, Wallet};
+use xrpl_mithril::models::transactions::wrapper::UnsignedTransaction;
+use xrpl_mithril::models::transactions::{Transaction, TransactionCommon};
+use xrpl_mithril::tx::autofill::autofill;
+use xrpl_mithril::tx::submit::submit_and_wait;
+use xrpl_mithril::tx::{sign_transaction, TransactionResult};
+use xrpl_mithril::types::{AccountId, Amount, Blob, XrpAmount};
+use xrpl_mithril::wallet::{Algorithm, Wallet};
 
 const TESTNET_RPC: &str = "https://s.altnet.rippletest.net:51234";
 const FAUCET_URL: &str = "https://faucet.altnet.rippletest.net/accounts";

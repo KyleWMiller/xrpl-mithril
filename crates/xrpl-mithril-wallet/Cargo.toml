@@ -1,0 +1,40 @@
+[package]
+name = "xrpl-mithril-wallet"
+version = "0.5.0"
+description = "Key generation, signing, and seed management for the XRP Ledger"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[features]
+default = ["pure-rust-crypto"]
+pure-rust-crypto = ["dep:k256"]
+native-crypto = ["dep:secp256k1"]
+
+[dependencies]
+xrpl-mithril-types = { workspace = true }
+xrpl-mithril-codec = { workspace = true }
+thiserror = { workspace = true }
+sha2 = { workspace = true }
+ripemd = { workspace = true }
+rand = { workspace = true }
+bs58 = { workspace = true }
+hex = { workspace = true }
+zeroize = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Ed25519 — always required (no C alternative needed, already fast)
+ed25519-dalek = { workspace = true }
+
+# Pure Rust secp256k1 (default)
+k256 = { workspace = true, optional = true }
+
+# Native C secp256k1 (opt-in)
+secp256k1 = { workspace = true, optional = true }
+
+[lints]
+workspace = true

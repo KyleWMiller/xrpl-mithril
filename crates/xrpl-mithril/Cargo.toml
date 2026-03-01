@@ -1,6 +1,6 @@
 [package]
 name = "xrpl-mithril"
-version = "0.1.0-alpha.1"
+version = "0.5.0"
 description = "A next-generation, pure Rust SDK for the XRP Ledger"
 edition.workspace = true
 rust-version.workspace = true
@@ -11,16 +11,16 @@ categories.workspace = true
 
 [features]
 default = ["pure-rust-crypto"]
-pure-rust-crypto = ["xrpl-wallet/pure-rust-crypto"]
-native-crypto = ["xrpl-wallet/native-crypto"]
+pure-rust-crypto = ["xrpl-mithril-wallet/pure-rust-crypto"]
+native-crypto = ["xrpl-mithril-wallet/native-crypto"]
 
 [dependencies]
-xrpl-types = { workspace = true }
-xrpl-codec = { workspace = true }
-xrpl-models = { workspace = true }
-xrpl-wallet = { workspace = true }
-xrpl-client = { workspace = true }
-xrpl-tx = { workspace = true }
+xrpl-mithril-types = { workspace = true }
+xrpl-mithril-codec = { workspace = true }
+xrpl-mithril-models = { workspace = true }
+xrpl-mithril-wallet = { workspace = true }
+xrpl-mithril-client = { workspace = true }
+xrpl-mithril-tx = { workspace = true }
 
 [dev-dependencies]
 tokio = { workspace = true }

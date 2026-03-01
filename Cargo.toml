@@ -1,12 +1,12 @@
 [workspace]
 resolver = "2"
 members = [
-    "crates/xrpl-types",
-    "crates/xrpl-codec",
-    "crates/xrpl-models",
-    "crates/xrpl-wallet",
-    "crates/xrpl-client",
-    "crates/xrpl-tx",
+    "crates/xrpl-mithril-types",
+    "crates/xrpl-mithril-codec",
+    "crates/xrpl-mithril-models",
+    "crates/xrpl-mithril-wallet",
+    "crates/xrpl-mithril-client",
+    "crates/xrpl-mithril-tx",
     "crates/xrpl-mithril",
 ]
 
@@ -20,12 +20,12 @@ categories = ["cryptography::cryptocurrencies", "api-bindings"]
 
 [workspace.dependencies]
 # Internal crates
-xrpl-types = { path = "crates/xrpl-types" }
-xrpl-codec = { path = "crates/xrpl-codec" }
-xrpl-models = { path = "crates/xrpl-models" }
-xrpl-wallet = { path = "crates/xrpl-wallet" }
-xrpl-client = { path = "crates/xrpl-client" }
-xrpl-tx = { path = "crates/xrpl-tx" }
+xrpl-mithril-types = { version = "0.1.0", path = "crates/xrpl-mithril-types" }
+xrpl-mithril-codec = { version = "0.3.0", path = "crates/xrpl-mithril-codec" }
+xrpl-mithril-models = { version = "0.4.0", path = "crates/xrpl-mithril-models" }
+xrpl-mithril-wallet = { version = "0.5.0", path = "crates/xrpl-mithril-wallet" }
+xrpl-mithril-client = { version = "0.3.0", path = "crates/xrpl-mithril-client" }
+xrpl-mithril-tx = { version = "0.4.0", path = "crates/xrpl-mithril-tx" }
 
 # Serialization
 serde = { version = "1", features = ["derive"] }

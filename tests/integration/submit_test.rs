@@ -3,13 +3,13 @@
 //! These tests require network access and a funded testnet account.
 //! Run with: `cargo test -- --ignored`
 
-use xrpl_client::{Client, JsonRpcClient};
-use xrpl_models::requests::server::ServerInfoRequest;
-use xrpl_tx::autofill::autofill;
-use xrpl_tx::builder::PaymentBuilder;
-use xrpl_tx::reliable::sign_transaction;
-use xrpl_types::{Amount, XrpAmount};
-use xrpl_wallet::{Algorithm, Wallet};
+use xrpl_mithril_client::{Client, JsonRpcClient};
+use xrpl_mithril_models::requests::server::ServerInfoRequest;
+use xrpl_mithril_tx::autofill::autofill;
+use xrpl_mithril_tx::builder::PaymentBuilder;
+use xrpl_mithril_tx::reliable::sign_transaction;
+use xrpl_mithril_types::{Amount, XrpAmount};
+use xrpl_mithril_wallet::{Algorithm, Wallet};
 
 const TESTNET_RPC: &str = "https://s.altnet.rippletest.net:51234";
 
