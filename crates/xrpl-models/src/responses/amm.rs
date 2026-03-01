@@ -3,6 +3,23 @@
 use serde::Deserialize;
 
 /// Response from the `amm_info` method.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::responses::amm::AmmInfoResponse;
+///
+/// let json = serde_json::json!({
+///     "amm": {
+///         "amount": "1000000",
+///         "amount2": {"value": "100", "currency": "USD", "issuer": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh"},
+///         "trading_fee": 500
+///     }
+/// });
+///
+/// let response: AmmInfoResponse = serde_json::from_value(json).unwrap();
+/// assert_eq!(response.amm.trading_fee, Some(500));
+/// ```
 #[derive(Debug, Clone, Deserialize)]
 pub struct AmmInfoResponse {
     /// The AMM data.

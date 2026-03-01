@@ -55,6 +55,34 @@ impl crate::serde_helpers::StArrayElement for PriceData {
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/ledger-data/ledger-entry-types/oracle>
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::ledger::Oracle;
+///
+/// let json = serde_json::json!({
+///     "LedgerEntryType": "Oracle",
+///     "Owner": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Provider": "70726F7669646572",
+///     "AssetClass": "63757272656E6379",
+///     "LastUpdateTime": 700000000,
+///     "PriceDataSeries": [
+///         {
+///             "BaseAsset": "USD",
+///             "QuoteAsset": "EUR",
+///             "AssetPrice": "12345",
+///             "Scale": 5
+///         }
+///     ],
+///     "PreviousTxnID": "0000000000000000000000000000000000000000000000000000000000000000",
+///     "PreviousTxnLgrSeq": 100,
+///     "index": "2B6AC232AA4C4BE41BF49D2459FA4A0347E1B543A4C92FCEE0821C0201E2E9A8"
+/// });
+///
+/// let entry: Oracle = serde_json::from_value(json).unwrap();
+/// assert_eq!(entry.price_data_series.len(), 1);
+/// ```
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Oracle {
     /// The ledger entry type identifier. Always `"Oracle"`.

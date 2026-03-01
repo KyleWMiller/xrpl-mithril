@@ -47,6 +47,19 @@ pub struct PathStep {
 /// Partial payments (flag `tfPartialPayment` / 0x00020000) allow delivery of
 /// less than `amount` as long as at least `deliver_min` is received.
 ///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::payment::Payment;
+///
+/// let json = serde_json::json!({
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "1000000"
+/// });
+/// let payment: Payment = serde_json::from_value(json).unwrap();
+/// assert_eq!(payment.destination.to_string(), "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe");
+/// ```
+///
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/transactions/types/payment>
@@ -108,6 +121,19 @@ pub struct Payment {
 /// Creates a Check object in the ledger, which is a deferred payment that
 /// the destination can cash later (up to `send_max`).
 ///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::payment::CheckCreate;
+///
+/// let json = serde_json::json!({
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "SendMax": "10000000"
+/// });
+/// let check: CheckCreate = serde_json::from_value(json).unwrap();
+/// assert_eq!(check.destination.to_string(), "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe");
+/// ```
+///
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/transactions/types/checkcreate>
@@ -153,6 +179,19 @@ pub struct CheckCreate {
 /// - `amount`: Cash the Check for exactly this value.
 /// - `deliver_min`: Cash the Check for at least this value (flexible amount).
 ///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::payment::CheckCash;
+///
+/// let json = serde_json::json!({
+///     "CheckID": "49647F0D748DC3FE26BDACBC57F251AADEFFF391403EC9BF87C97F67E9977FB0",
+///     "Amount": "5000000"
+/// });
+/// let cash: CheckCash = serde_json::from_value(json).unwrap();
+/// assert!(cash.amount.is_some());
+/// ```
+///
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/transactions/types/checkcash>
@@ -185,6 +224,17 @@ pub struct CheckCash {
 /// Cancels an unredeemed Check, removing it from the ledger. The Check can
 /// be cancelled by the source, the destination, or anyone if the Check has
 /// expired.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::payment::CheckCancel;
+///
+/// let json = serde_json::json!({
+///     "CheckID": "49647F0D748DC3FE26BDACBC57F251AADEFFF391403EC9BF87C97F67E9977FB0"
+/// });
+/// let cancel: CheckCancel = serde_json::from_value(json).unwrap();
+/// ```
 ///
 /// # XRPL Documentation
 ///

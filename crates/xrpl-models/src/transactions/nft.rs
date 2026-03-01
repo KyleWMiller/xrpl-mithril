@@ -27,6 +27,21 @@ use xrpl_types::{AccountId, Amount, Blob, Hash256};
 /// that the issuer collects on secondary sales when the `tfTransferable` flag
 /// is set.
 ///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::nft::NFTokenMint;
+///
+/// let json = serde_json::json!({
+///     "NFTokenTaxon": 0,
+///     "TransferFee": 5000,
+///     "URI": "68747470733A2F2F6578616D706C652E636F6D2F6E6674"
+/// });
+/// let mint: NFTokenMint = serde_json::from_value(json).unwrap();
+/// assert_eq!(mint.nftoken_taxon, 0);
+/// assert_eq!(mint.transfer_fee, Some(5000));
+/// ```
+///
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/transactions/types/nftokenmint>

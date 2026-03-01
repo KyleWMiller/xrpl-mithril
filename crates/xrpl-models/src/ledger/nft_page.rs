@@ -34,6 +34,25 @@ impl crate::serde_helpers::StArrayElement for NfToken {
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/ledger-data/ledger-entry-types/nftokenpage>
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::ledger::NftTokenPage;
+///
+/// let json = serde_json::json!({
+///     "LedgerEntryType": "NFTokenPage",
+///     "NFTokens": [
+///         {
+///             "NFTokenID": "000B013A95F14B0044F78A264E41713C64B5F89242540EE208C3098E00000D65"
+///         }
+///     ],
+///     "index": "2B6AC232AA4C4BE41BF49D2459FA4A0347E1B543A4C92FCEE0821C0201E2E9A8"
+/// });
+///
+/// let entry: NftTokenPage = serde_json::from_value(json).unwrap();
+/// assert_eq!(entry.nftokens.len(), 1);
+/// ```
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct NftTokenPage {
     /// The ledger entry type identifier. Always `"NFTokenPage"`.

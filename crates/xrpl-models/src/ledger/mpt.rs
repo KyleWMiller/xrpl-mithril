@@ -20,6 +20,29 @@ use xrpl_types::{AccountId, Blob, Hash256, MptIssuanceId};
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/ledger-data/ledger-entry-types/mptokenissuance>
+///
+/// # Examples
+///
+/// Deserialize an MPT issuance from JSON:
+///
+/// ```
+/// use xrpl_models::ledger::MptIssuance;
+///
+/// let json = serde_json::json!({
+///     "LedgerEntryType": "MPTokenIssuance",
+///     "Issuer": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Flags": 0,
+///     "Sequence": 1,
+///     "MaximumAmount": "1000000",
+///     "OutstandingAmount": "500000",
+///     "PreviousTxnID": "0000000000000000000000000000000000000000000000000000000000000000",
+///     "PreviousTxnLgrSeq": 10,
+///     "index": "2B6AC232AA4C4BE41BF49D2459FA4A0347E1B543A4C92FCEE0821C0201E2E9A8"
+/// });
+///
+/// let entry: MptIssuance = serde_json::from_value(json).unwrap();
+/// assert_eq!(entry.maximum_amount, Some("1000000".to_string()));
+/// ```
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct MptIssuance {
     /// The ledger entry type identifier. Always `"MPTokenIssuance"`.
@@ -89,6 +112,26 @@ pub struct MptIssuance {
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/ledger-data/ledger-entry-types/mptoken>
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::ledger::MpToken;
+///
+/// let json = serde_json::json!({
+///     "LedgerEntryType": "MPToken",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "MPTokenIssuanceID": "00000001AABBCCDD00000001AABBCCDD00000001AABBCCDD",
+///     "MPTAmount": "1000",
+///     "Flags": 0,
+///     "PreviousTxnID": "0000000000000000000000000000000000000000000000000000000000000000",
+///     "PreviousTxnLgrSeq": 20,
+///     "index": "2B6AC232AA4C4BE41BF49D2459FA4A0347E1B543A4C92FCEE0821C0201E2E9A8"
+/// });
+///
+/// let entry: MpToken = serde_json::from_value(json).unwrap();
+/// assert_eq!(entry.mpt_amount, Some("1000".to_string()));
+/// ```
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct MpToken {
     /// The ledger entry type identifier. Always `"MPToken"`.

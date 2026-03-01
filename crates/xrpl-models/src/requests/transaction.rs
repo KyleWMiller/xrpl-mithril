@@ -7,6 +7,20 @@ use super::{LedgerSpecifier, XrplRequest};
 use crate::responses::transaction::{SubmitResponse, TransactionEntryResponse, TxResponse};
 
 /// Submit a signed transaction blob to the network.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::SubmitRequest;
+///
+/// let request = SubmitRequest {
+///     tx_blob: "1200002200000000240000000361D4838D7EA4C6800000000000000000000000000055534400000000004B4E9C06F24296074F7BC48F92A97916C6DC5EA968400000000000000A732103AC651208BDA639C37B9C8C561EA9CF5E3A4C5B88B50CB4C7F208E1B9F4B21643744630440220781B399C4C038E2E160866B1F89001AA0434AC88C44F2E83D25A4B6019B96B4E0220155DC1621DC1AABA0AA1C4AFEE4AE82D37B4F0B0E0C4F15A32F05C7FBC54B6C38114F36B40EBB5004A18AAAB1A6D03FC0A40C1F1AF8314B5F762798A53D543A014CAF8B297CFF8F2F937E8".to_string(),
+///     fail_hard: Some(false),
+/// };
+///
+/// let json = serde_json::to_value(&request).unwrap();
+/// assert!(json["tx_blob"].as_str().unwrap().len() > 0);
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct SubmitRequest {
     /// The hex-encoded signed transaction binary.
@@ -24,6 +38,17 @@ impl XrplRequest for SubmitRequest {
 }
 
 /// Submit a multi-signed transaction as JSON.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::SubmitMultisignedRequest;
+///
+/// let request = SubmitMultisignedRequest {
+///     tx_json: serde_json::json!({"TransactionType": "Payment"}),
+///     fail_hard: None,
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct SubmitMultisignedRequest {
     /// The transaction JSON with the Signers array.
@@ -41,6 +66,22 @@ impl XrplRequest for SubmitMultisignedRequest {
 }
 
 /// Look up a transaction by its hash.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::TxRequest;
+///
+/// let request = TxRequest {
+///     transaction: "E08D6E9754025BA2534A78707605E0601F03ACE063687A0CA1BDDACFCD1698C7".to_string(),
+///     binary: None,
+///     min_ledger: None,
+///     max_ledger: None,
+/// };
+///
+/// let json = serde_json::to_value(&request).unwrap();
+/// assert!(json["transaction"].as_str().unwrap().len() == 64);
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct TxRequest {
     /// The transaction hash (hex).
@@ -64,6 +105,18 @@ impl XrplRequest for TxRequest {
 }
 
 /// Look up a transaction in a specific ledger.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::TransactionEntryRequest;
+/// use xrpl_types::Hash256;
+///
+/// let request = TransactionEntryRequest {
+///     tx_hash: Hash256::from_hex("E08D6E9754025BA2534A78707605E0601F03ACE063687A0CA1BDDACFCD1698C7").unwrap(),
+///     ledger_index: Some(xrpl_models::requests::LedgerSpecifier::Index(12345)),
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct TransactionEntryRequest {
     /// The transaction hash.

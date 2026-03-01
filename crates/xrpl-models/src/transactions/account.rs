@@ -44,6 +44,20 @@ impl crate::serde_helpers::StArrayElement for SignerEntry {
 /// general-purpose transaction for changing account settings such as flags,
 /// domain, transfer rate, tick size, and more.
 ///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::account::AccountSet;
+///
+/// let json = serde_json::json!({
+///     "SetFlag": 8,
+///     "Domain": "6578616D706C652E636F6D"
+/// });
+/// let acct_set: AccountSet = serde_json::from_value(json).unwrap();
+/// assert_eq!(acct_set.set_flag, Some(8));
+/// assert!(acct_set.domain.is_some());
+/// ```
+///
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/transactions/types/accountset>

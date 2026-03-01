@@ -42,6 +42,35 @@ impl crate::serde_helpers::StArrayElement for SignerEntry {
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/ledger-data/ledger-entry-types/signerlist>
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::ledger::SignerList;
+///
+/// let json = serde_json::json!({
+///     "LedgerEntryType": "SignerList",
+///     "Flags": 0,
+///     "SignerQuorum": 3,
+///     "SignerEntries": [
+///         {
+///             "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///             "SignerWeight": 2
+///         },
+///         {
+///             "Account": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///             "SignerWeight": 1
+///         }
+///     ],
+///     "PreviousTxnID": "0000000000000000000000000000000000000000000000000000000000000000",
+///     "PreviousTxnLgrSeq": 10,
+///     "index": "2B6AC232AA4C4BE41BF49D2459FA4A0347E1B543A4C92FCEE0821C0201E2E9A8"
+/// });
+///
+/// let entry: SignerList = serde_json::from_value(json).unwrap();
+/// assert_eq!(entry.signer_quorum, 3);
+/// assert_eq!(entry.signer_entries.len(), 2);
+/// ```
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SignerList {
     /// The ledger entry type identifier. Always `"SignerList"`.

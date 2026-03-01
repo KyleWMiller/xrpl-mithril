@@ -4,6 +4,21 @@ use serde::Deserialize;
 use xrpl_types::Hash256;
 
 /// Response from the `submit` and `submit_multisigned` methods.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::responses::transaction::SubmitResponse;
+///
+/// let json = serde_json::json!({
+///     "engine_result": "tesSUCCESS",
+///     "engine_result_code": 0,
+///     "engine_result_message": "The transaction was applied."
+/// });
+///
+/// let response: SubmitResponse = serde_json::from_value(json).unwrap();
+/// assert_eq!(response.engine_result, "tesSUCCESS");
+/// ```
 #[derive(Debug, Clone, Deserialize)]
 pub struct SubmitResponse {
     /// The preliminary engine result code (e.g., "tesSUCCESS", "terQUEUED").
@@ -22,6 +37,21 @@ pub struct SubmitResponse {
 }
 
 /// Response from the `tx` method.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::responses::transaction::TxResponse;
+///
+/// let json = serde_json::json!({
+///     "hash": "E08D6E9754025BA2534A78707605E0601F03ACE063687A0CA1BDDACFCD1698C7",
+///     "ledger_index": 12345,
+///     "validated": true
+/// });
+///
+/// let response: TxResponse = serde_json::from_value(json).unwrap();
+/// assert_eq!(response.validated, Some(true));
+/// ```
 #[derive(Debug, Clone, Deserialize)]
 pub struct TxResponse {
     /// The transaction hash.

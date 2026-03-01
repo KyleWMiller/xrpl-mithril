@@ -10,6 +10,19 @@ use crate::responses::ledger::{
 };
 
 /// Request information about a ledger.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::{LedgerRequest, LedgerSpecifier, LedgerShortcut};
+///
+/// let request = LedgerRequest {
+///     ledger_index: Some(LedgerSpecifier::Named(LedgerShortcut::Validated)),
+///     transactions: Some(true),
+///     expand: Some(true),
+///     ..Default::default()
+/// };
+/// ```
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct LedgerRequest {
     /// Which ledger to retrieve.
@@ -43,6 +56,14 @@ impl XrplRequest for LedgerRequest {
 }
 
 /// Request the sequence number of the most recently closed ledger.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::LedgerClosedRequest;
+///
+/// let request = LedgerClosedRequest {};
+/// ```
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct LedgerClosedRequest {}
 
@@ -54,6 +75,14 @@ impl XrplRequest for LedgerClosedRequest {
 }
 
 /// Request the sequence number of the current in-progress ledger.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::LedgerCurrentRequest;
+///
+/// let request = LedgerCurrentRequest {};
+/// ```
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct LedgerCurrentRequest {}
 
@@ -65,6 +94,19 @@ impl XrplRequest for LedgerCurrentRequest {
 }
 
 /// Request raw ledger entries from a ledger.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::LedgerDataRequest;
+///
+/// let request = LedgerDataRequest {
+///     ledger_index: None,
+///     binary: Some(false),
+///     limit: Some(100),
+///     marker: None,
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct LedgerDataRequest {
     /// Which ledger to query.
@@ -89,6 +131,27 @@ impl XrplRequest for LedgerDataRequest {
 }
 
 /// Request a specific ledger entry by its ID or type-specific keys.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::LedgerEntryRequest;
+///
+/// // Look up an AccountRoot by address:
+/// let request = LedgerEntryRequest {
+///     index: None,
+///     account_root: Some("rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".to_string()),
+///     offer: None,
+///     ripple_state: None,
+///     check: None,
+///     escrow: None,
+///     payment_channel: None,
+///     deposit_preauth: None,
+///     ticket: None,
+///     ledger_index: None,
+///     binary: None,
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct LedgerEntryRequest {
     /// The ledger entry index (hash) to look up directly.

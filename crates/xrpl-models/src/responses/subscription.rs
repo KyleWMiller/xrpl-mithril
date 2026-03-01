@@ -24,6 +24,20 @@ pub struct UnsubscribeResponse {
 ///
 /// These are not direct RPC responses but asynchronous messages pushed by
 /// the server on a WebSocket connection.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::responses::subscription::SubscriptionMessage;
+///
+/// let json = serde_json::json!({
+///     "type": "ledgerClosed",
+///     "ledger_index": 12345,
+///     "ledger_hash": "ABC123"
+/// });
+///
+/// let msg: SubscriptionMessage = serde_json::from_value(json).unwrap();
+/// ```
 #[derive(Debug, Clone, Deserialize)]
 #[serde(tag = "type")]
 #[non_exhaustive]

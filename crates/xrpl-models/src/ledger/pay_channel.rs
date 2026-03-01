@@ -19,6 +19,28 @@ use xrpl_types::{AccountId, Amount, Blob, Hash256};
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/ledger-data/ledger-entry-types/paychannel>
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::ledger::PayChannel;
+///
+/// let json = serde_json::json!({
+///     "LedgerEntryType": "PayChannel",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "10000000",
+///     "Balance": "5000000",
+///     "SettleDelay": 86400,
+///     "PublicKey": "0330E7FC9D56BB25D6893BA3F317AE5BCF33B3291BD63DB32654A313222F7FD020",
+///     "PreviousTxnID": "0000000000000000000000000000000000000000000000000000000000000000",
+///     "PreviousTxnLgrSeq": 50,
+///     "index": "2B6AC232AA4C4BE41BF49D2459FA4A0347E1B543A4C92FCEE0821C0201E2E9A8"
+/// });
+///
+/// let entry: PayChannel = serde_json::from_value(json).unwrap();
+/// assert_eq!(entry.settle_delay, 86400);
+/// ```
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PayChannel {
     /// The ledger entry type identifier. Always `"PayChannel"`.

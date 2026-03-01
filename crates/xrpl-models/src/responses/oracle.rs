@@ -3,6 +3,26 @@
 use serde::Deserialize;
 
 /// Response from the `get_aggregate_price` method.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::responses::oracle::GetAggregatePriceResponse;
+///
+/// let json = serde_json::json!({
+///     "entire_set": {
+///         "mean": "0.74",
+///         "median": "0.74",
+///         "size": 3
+///     },
+///     "time": 700000000,
+///     "ledger_index": 12345,
+///     "validated": true
+/// });
+///
+/// let response: GetAggregatePriceResponse = serde_json::from_value(json).unwrap();
+/// assert!(response.entire_set.is_some());
+/// ```
 #[derive(Debug, Clone, Deserialize)]
 pub struct GetAggregatePriceResponse {
     /// The median price.

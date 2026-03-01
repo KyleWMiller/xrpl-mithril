@@ -139,6 +139,22 @@ pub enum PseudoTransactionType {
 ///
 /// Every transaction on the XRPL includes these fields. Type-specific fields
 /// are defined in each transaction's own struct.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::TransactionCommon;
+///
+/// let json = serde_json::json!({
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Fee": "12",
+///     "Sequence": 1,
+///     "LastLedgerSequence": 100
+/// });
+/// let common: TransactionCommon = serde_json::from_value(json).unwrap();
+/// assert_eq!(common.sequence, 1);
+/// assert_eq!(common.last_ledger_sequence, Some(100));
+/// ```
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TransactionCommon {
     /// The unique address of the account that initiated the transaction.
@@ -203,6 +219,20 @@ pub struct TransactionCommon {
 }
 
 /// A memo attached to a transaction.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::Memo;
+///
+/// let json = serde_json::json!({
+///     "MemoType": "746578742F706C61696E",
+///     "MemoData": "48656C6C6F"
+/// });
+/// let memo: Memo = serde_json::from_value(json).unwrap();
+/// assert!(memo.memo_type.is_some());
+/// assert!(memo.memo_data.is_some());
+/// ```
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Memo {
     /// The type of memo (conventionally a MIME type).

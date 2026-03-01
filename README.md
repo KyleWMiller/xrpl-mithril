@@ -1,11 +1,17 @@
-[![Crates.io](https://img.shields.io/crates/v/xrpl-mithril.svg)](https://crates.io/crates/xrpl-mithril)
-[![docs.rs](https://docs.rs/xrpl-mithril/badge.svg)](https://docs.rs/xrpl-mithril)
-[![CI](https://github.com/KyleWMiller/xrpl-mithril/actions/workflows/ci.yml/badge.svg)](https://github.com/KyleWMiller/xrpl-mithril/actions)
-[![License: MIT/Apache-2.0](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg)](LICENSE-MIT)
-[![MSRV: 1.85](https://img.shields.io/badge/MSRV-1.85-orange.svg)](#minimum-supported-rust-version)
-[![unsafe forbidden](https://img.shields.io/badge/unsafe-forbidden-success.svg)](https://github.com/rust-secure-code/safety-dance/)
+<p align="center">
+  <img src="assets/logo.png" alt="xrpl-mithril logo" width="200">
+</p>
 
-# xrpl-mithril
+<h1 align="center">xrpl-mithril</h1>
+
+<p align="center">
+  <a href="https://crates.io/crates/xrpl-mithril"><img src="https://img.shields.io/crates/v/xrpl-mithril.svg" alt="Crates.io"></a>
+  <a href="https://docs.rs/xrpl-mithril"><img src="https://docs.rs/xrpl-mithril/badge.svg" alt="docs.rs"></a>
+  <a href="https://github.com/KyleWMiller/xrpl-mithril/actions"><img src="https://github.com/KyleWMiller/xrpl-mithril/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE-MIT"><img src="https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg" alt="License: MIT/Apache-2.0"></a>
+  <a href="#minimum-supported-rust-version"><img src="https://img.shields.io/badge/MSRV-1.85-orange.svg" alt="MSRV: 1.85"></a>
+  <a href="https://github.com/rust-secure-code/safety-dance/"><img src="https://img.shields.io/badge/unsafe-forbidden-success.svg" alt="unsafe forbidden"></a>
+</p>
 
 **A next-generation, pure Rust SDK for the XRP Ledger.**
 

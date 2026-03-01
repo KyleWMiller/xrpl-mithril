@@ -6,6 +6,22 @@ use xrpl_types::{AccountId, Amount, Hash256};
 use crate::requests::Marker;
 
 /// Response from the `nft_info` method.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::responses::nft::NftInfoResponse;
+///
+/// let json = serde_json::json!({
+///     "nft_id": "000B013A95F14B0044F78A264E41713C64B5F89242540EE208C3098E00000D65",
+///     "owner": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "flags": 8,
+///     "validated": true
+/// });
+///
+/// let response: NftInfoResponse = serde_json::from_value(json).unwrap();
+/// assert_eq!(response.flags, Some(8));
+/// ```
 #[derive(Debug, Clone, Deserialize)]
 pub struct NftInfoResponse {
     /// The NFToken ID.

@@ -7,6 +7,22 @@ use super::XrplRequest;
 use crate::responses::subscription::{SubscribeResponse, UnsubscribeResponse};
 
 /// Subscribe to one or more event streams (WebSocket only).
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::SubscribeRequest;
+///
+/// let request = SubscribeRequest {
+///     streams: Some(vec!["ledger".to_string()]),
+///     accounts: None,
+///     accounts_proposed: None,
+///     books: None,
+/// };
+///
+/// let json = serde_json::to_value(&request).unwrap();
+/// assert_eq!(json["streams"], serde_json::json!(["ledger"]));
+/// ```
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct SubscribeRequest {
     /// Named streams to subscribe to (e.g., `"ledger"`, `"transactions"`,
@@ -51,6 +67,17 @@ impl XrplRequest for SubscribeRequest {
 }
 
 /// Unsubscribe from previously subscribed streams (WebSocket only).
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::UnsubscribeRequest;
+///
+/// let request = UnsubscribeRequest {
+///     streams: Some(vec!["ledger".to_string()]),
+///     ..Default::default()
+/// };
+/// ```
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct UnsubscribeRequest {
     /// Named streams to unsubscribe from.

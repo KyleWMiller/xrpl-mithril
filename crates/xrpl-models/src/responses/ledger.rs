@@ -49,6 +49,20 @@ pub struct LedgerData {
 }
 
 /// Response from the `ledger_closed` method.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::responses::ledger::LedgerClosedResponse;
+///
+/// let json = serde_json::json!({
+///     "ledger_hash": "E08D6E9754025BA2534A78707605E0601F03ACE063687A0CA1BDDACFCD1698C7",
+///     "ledger_index": 12345
+/// });
+///
+/// let response: LedgerClosedResponse = serde_json::from_value(json).unwrap();
+/// assert_eq!(response.ledger_index, 12345);
+/// ```
 #[derive(Debug, Clone, Deserialize)]
 pub struct LedgerClosedResponse {
     /// Hash of the most recently closed ledger.
@@ -58,6 +72,19 @@ pub struct LedgerClosedResponse {
 }
 
 /// Response from the `ledger_current` method.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::responses::ledger::LedgerCurrentResponse;
+///
+/// let json = serde_json::json!({
+///     "ledger_current_index": 54321
+/// });
+///
+/// let response: LedgerCurrentResponse = serde_json::from_value(json).unwrap();
+/// assert_eq!(response.ledger_current_index, 54321);
+/// ```
 #[derive(Debug, Clone, Deserialize)]
 pub struct LedgerCurrentResponse {
     /// Sequence number of the current in-progress ledger.

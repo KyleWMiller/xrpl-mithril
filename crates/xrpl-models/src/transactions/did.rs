@@ -25,6 +25,20 @@ use xrpl_types::Blob;
 /// The DID object is keyed to the account, so each account can have at most
 /// one DID entry in the ledger.
 ///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::did::DIDSet;
+///
+/// let json = serde_json::json!({
+///     "URI": "68747470733A2F2F6578616D706C652E636F6D2F646964",
+///     "DIDDocument": "7B22696422203A2022646964227D"
+/// });
+/// let did: DIDSet = serde_json::from_value(json).unwrap();
+/// assert!(did.uri.is_some());
+/// assert!(did.data.is_some());
+/// ```
+///
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/transactions/types/didset>

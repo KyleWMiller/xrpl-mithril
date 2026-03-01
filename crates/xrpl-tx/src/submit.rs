@@ -2,6 +2,35 @@
 //!
 //! Provides [`submit_and_wait`] which submits a signed transaction and
 //! polls until it is validated or the `LastLedgerSequence` is passed.
+//!
+//! # Examples
+//!
+//! ```no_run
+//! use xrpl_tx::autofill::autofill;
+//! use xrpl_tx::builder::PaymentBuilder;
+//! use xrpl_tx::reliable::sign_transaction;
+//! use xrpl_tx::submit::submit_and_wait;
+//! use xrpl_client::JsonRpcClient;
+//! use xrpl_wallet::{Wallet, Algorithm};
+//! use xrpl_types::{Amount, XrpAmount};
+//!
+//! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+//! let client = JsonRpcClient::new("https://s.altnet.rippletest.net:51234")?;
+//! let wallet = Wallet::from_seed_encoded("sEdT7wHTCLzDG7Ue4312Kp4QA389Xmb")?;
+//!
+//! let mut unsigned = PaymentBuilder::new()
+//!     .account(*wallet.account_id())
+//!     .destination("rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe".parse()?)
+//!     .amount(Amount::Xrp(XrpAmount::from_drops(1_000_000)?))
+//!     .build()?;
+//!
+//! autofill(&client, &mut unsigned).await?;
+//! let signed = sign_transaction(&unsigned, &wallet)?;
+//! let result = submit_and_wait(&client, &signed).await?;
+//! println!("Hash: {}, Result: {}", result.hash, result.result_code);
+//! # Ok(())
+//! # }
+//! ```
 
 use xrpl_client::Client;
 use xrpl_models::requests::{
@@ -13,6 +42,20 @@ use xrpl_models::transactions::wrapper::{Signable, TypedSignedTransaction};
 use crate::error::TxError;
 
 /// The result of a successfully submitted and validated transaction.
+///
+/// Returned by [`submit_and_wait`] after the transaction is included in a
+/// validated ledger with a `tes` (success) result code.
+///
+/// # Examples
+///
+/// ```no_run
+/// use xrpl_tx::submit::TransactionResult;
+///
+/// # fn show(result: TransactionResult) {
+/// println!("TX {} validated in ledger {}", result.hash, result.ledger_index);
+/// assert_eq!(result.result_code, "tesSUCCESS");
+/// # }
+/// ```
 #[derive(Debug, Clone)]
 pub struct TransactionResult {
     /// The transaction hash.

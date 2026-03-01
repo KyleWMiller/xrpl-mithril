@@ -18,6 +18,30 @@ use xrpl_types::{AccountId, Amount, Blob, Hash128, Hash256};
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/ledger-data/ledger-entry-types/accountroot>
+///
+/// # Examples
+///
+/// Deserialize from JSON returned by the XRPL server:
+///
+/// ```
+/// use xrpl_models::ledger::AccountRoot;
+///
+/// let json = serde_json::json!({
+///     "LedgerEntryType": "AccountRoot",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Balance": "10000000000",
+///     "Sequence": 1,
+///     "Flags": 0,
+///     "OwnerCount": 0,
+///     "PreviousTxnID": "0000000000000000000000000000000000000000000000000000000000000000",
+///     "PreviousTxnLgrSeq": 1,
+///     "index": "2B6AC232AA4C4BE41BF49D2459FA4A0347E1B543A4C92FCEE0821C0201E2E9A8"
+/// });
+///
+/// let entry: AccountRoot = serde_json::from_value(json).unwrap();
+/// assert_eq!(entry.sequence, 1);
+/// assert_eq!(entry.owner_count, 0);
+/// ```
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AccountRoot {
     /// The ledger entry type identifier. Always `"AccountRoot"`.

@@ -39,6 +39,22 @@ pub const HASH_PREFIX_LEDGER: [u8; 4] = [0x4C, 0x57, 0x52, 0x00];
 /// Compute SHA-512/Half: SHA-512 of the input, truncated to the first 32 bytes.
 ///
 /// This is the standard hash function used throughout the XRPL protocol.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_codec::signing::sha512_half;
+///
+/// let hash = sha512_half(b"");
+/// assert_eq!(hash.len(), 32);
+/// // SHA-512("") starts with cf83e1357eefb8bd...
+/// assert_eq!(hash[0], 0xCF);
+/// assert_eq!(hash[1], 0x83);
+///
+/// // Different inputs produce different hashes
+/// let hash2 = sha512_half(b"hello");
+/// assert_ne!(hash, hash2);
+/// ```
 #[must_use]
 pub fn sha512_half(data: &[u8]) -> [u8; 32] {
     let full = Sha512::digest(data);
@@ -51,6 +67,28 @@ pub fn sha512_half(data: &[u8]) -> [u8; 32] {
 ///
 /// This is: `HASH_PREFIX_TRANSACTION_SIGN` + canonical binary serialization
 /// (with `for_signing=true`, which excludes `TxnSignature` and `Signers`).
+///
+/// # Examples
+///
+/// ```
+/// use serde_json::json;
+/// use xrpl_codec::signing::signing_data;
+///
+/// let tx = json!({
+///     "TransactionType": "Payment",
+///     "Sequence": 1u32,
+///     "Fee": "12",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "1000000"
+/// });
+/// let map = tx.as_object().expect("json object");
+/// let data = signing_data(map)?;
+///
+/// // First 4 bytes are the STX\0 hash prefix
+/// assert_eq!(&data[..4], b"STX\0");
+/// # Ok::<(), xrpl_codec::error::CodecError>(())
+/// ```
 ///
 /// # Errors
 ///
@@ -66,8 +104,33 @@ pub fn signing_data(
 
 /// Compute the signing hash for single-key signing.
 ///
-/// This is `SHA-512/Half(signing_data(tx))` — the hash that the signer
+/// This is `SHA-512/Half(signing_data(tx))` -- the hash that the signer
 /// signs with their private key.
+///
+/// # Examples
+///
+/// ```
+/// use serde_json::json;
+/// use xrpl_codec::signing::signing_hash;
+///
+/// let tx = json!({
+///     "TransactionType": "Payment",
+///     "Sequence": 1u32,
+///     "Fee": "12",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "1000000"
+/// });
+/// let map = tx.as_object().expect("json object");
+/// let hash = signing_hash(map)?;
+///
+/// assert_eq!(hash.len(), 32);
+///
+/// // The hash is deterministic
+/// let hash2 = signing_hash(map)?;
+/// assert_eq!(hash, hash2);
+/// # Ok::<(), xrpl_codec::error::CodecError>(())
+/// ```
 ///
 /// # Errors
 ///
@@ -87,6 +150,31 @@ pub fn signing_hash(
 /// The signer account ID is appended so that the same transaction produces
 /// different signing hashes for each multi-signer.
 ///
+/// # Examples
+///
+/// ```
+/// use serde_json::json;
+/// use xrpl_codec::signing::multi_signing_data;
+///
+/// let tx = json!({
+///     "TransactionType": "Payment",
+///     "Sequence": 1u32,
+///     "Fee": "12",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "1000000"
+/// });
+/// let map = tx.as_object().expect("json object");
+/// let signer_id = [0xAAu8; 20];
+/// let data = multi_signing_data(map, &signer_id)?;
+///
+/// // First 4 bytes are the SMT\0 hash prefix
+/// assert_eq!(&data[..4], b"SMT\0");
+/// // Last 20 bytes are the signer account ID
+/// assert_eq!(&data[data.len() - 20..], &signer_id);
+/// # Ok::<(), xrpl_codec::error::CodecError>(())
+/// ```
+///
 /// # Errors
 ///
 /// Returns [`CodecError`] if serialization fails or the account ID is invalid.
@@ -104,6 +192,31 @@ pub fn multi_signing_data(
 /// Compute the multi-signing hash for a specific signer.
 ///
 /// This is `SHA-512/Half(multi_signing_data(tx, signer_account_id))`.
+///
+/// # Examples
+///
+/// ```
+/// use serde_json::json;
+/// use xrpl_codec::signing::multi_signing_hash;
+///
+/// let tx = json!({
+///     "TransactionType": "Payment",
+///     "Sequence": 1u32,
+///     "Fee": "12",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "1000000"
+/// });
+/// let map = tx.as_object().expect("json object");
+///
+/// // Different signers produce different hashes for the same transaction
+/// let signer_a = [0xAAu8; 20];
+/// let signer_b = [0xBBu8; 20];
+/// let hash_a = multi_signing_hash(map, &signer_a)?;
+/// let hash_b = multi_signing_hash(map, &signer_b)?;
+/// assert_ne!(hash_a, hash_b);
+/// # Ok::<(), xrpl_codec::error::CodecError>(())
+/// ```
 ///
 /// # Errors
 ///
@@ -125,6 +238,33 @@ pub fn multi_signing_hash(
 ///
 /// The resulting 32-byte hash is the transaction ID as shown on the ledger.
 ///
+/// # Examples
+///
+/// ```
+/// use serde_json::json;
+/// use xrpl_codec::signing::transaction_id;
+///
+/// let tx = json!({
+///     "TransactionType": "Payment",
+///     "Sequence": 1u32,
+///     "Fee": "12",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "1000000",
+///     "SigningPubKey": "ED5F5AC43F527AE97194E860E5B28E6751B0B3BBEAC0780826AAF6DB9B3EE001",
+///     "TxnSignature": "DEADBEEFCAFE"
+/// });
+/// let map = tx.as_object().expect("json object");
+/// let id = transaction_id(map)?;
+///
+/// assert_eq!(id.len(), 32);
+///
+/// // The transaction ID is deterministic
+/// let id2 = transaction_id(map)?;
+/// assert_eq!(id, id2);
+/// # Ok::<(), xrpl_codec::error::CodecError>(())
+/// ```
+///
 /// # Errors
 ///
 /// Returns [`CodecError`] if serialization fails.
@@ -140,6 +280,32 @@ pub fn transaction_id(
 /// Compute the transaction ID and return it as an uppercase hex string.
 ///
 /// This is a convenience wrapper around [`transaction_id`].
+///
+/// # Examples
+///
+/// ```
+/// use serde_json::json;
+/// use xrpl_codec::signing::transaction_id_hex;
+///
+/// let tx = json!({
+///     "TransactionType": "Payment",
+///     "Sequence": 1u32,
+///     "Fee": "12",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "1000000",
+///     "SigningPubKey": "ED5F5AC43F527AE97194E860E5B28E6751B0B3BBEAC0780826AAF6DB9B3EE001",
+///     "TxnSignature": "DEADBEEFCAFE"
+/// });
+/// let map = tx.as_object().expect("json object");
+/// let hex_id = transaction_id_hex(map)?;
+///
+/// // 32 bytes encoded as 64 uppercase hex characters
+/// assert_eq!(hex_id.len(), 64);
+/// assert!(hex_id.chars().all(|c| c.is_ascii_hexdigit()));
+/// assert_eq!(hex_id, hex_id.to_uppercase());
+/// # Ok::<(), xrpl_codec::error::CodecError>(())
+/// ```
 ///
 /// # Errors
 ///

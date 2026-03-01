@@ -20,6 +20,28 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 ///
 /// In JSON, standard codes serialize as 3-char strings (e.g., `"USD"`),
 /// non-standard codes serialize as 40-char uppercase hex strings.
+///
+/// # Examples
+///
+/// Standard 3-character currency code:
+///
+/// ```
+/// use xrpl_types::CurrencyCode;
+///
+/// let usd = CurrencyCode::from_ascii("USD").unwrap();
+/// assert!(usd.is_standard());
+/// assert_eq!(format!("{usd}"), "USD");
+/// ```
+///
+/// Non-standard currency code from hex:
+///
+/// ```
+/// use xrpl_types::CurrencyCode;
+///
+/// let hex_code = "0158415500000000000000000000000000000000";
+/// let code = CurrencyCode::from_hex(hex_code).unwrap();
+/// assert!(!code.is_standard());
+/// ```
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
 pub struct CurrencyCode([u8; 20]);
 
@@ -39,6 +61,20 @@ impl CurrencyCode {
     ///
     /// Returns [`TypeError::InvalidCurrencyCode`] if the string is not exactly 3 ASCII characters,
     /// or if it would encode as XRP (all zeros).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_types::CurrencyCode;
+    ///
+    /// let usd = CurrencyCode::from_ascii("USD").unwrap();
+    /// assert!(usd.is_standard());
+    /// assert_eq!(usd.as_ascii(), Some([b'U', b'S', b'D']));
+    ///
+    /// // Non-3-character codes are rejected:
+    /// assert!(CurrencyCode::from_ascii("US").is_err());
+    /// assert!(CurrencyCode::from_ascii("USDT").is_err());
+    /// ```
     pub fn from_ascii(code: &str) -> Result<Self, TypeError> {
         let bytes = code.as_bytes();
         if bytes.len() != 3 {
@@ -62,6 +98,20 @@ impl CurrencyCode {
     /// # Errors
     ///
     /// Returns [`TypeError::InvalidHex`] if not valid hex or wrong length.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_types::CurrencyCode;
+    ///
+    /// // Non-standard 20-byte hex currency code (40 hex chars):
+    /// let hex_code = "0158415500000000000000000000000000000000";
+    /// let code = CurrencyCode::from_hex(hex_code).unwrap();
+    /// assert!(!code.is_standard());
+    ///
+    /// // Wrong length returns an error:
+    /// assert!(CurrencyCode::from_hex("ABCD").is_err());
+    /// ```
     pub fn from_hex(hex_str: &str) -> Result<Self, TypeError> {
         let bytes = hex::decode(hex_str).map_err(|e| TypeError::InvalidHex(e.to_string()))?;
         if bytes.len() != 20 {
@@ -87,6 +137,20 @@ impl CurrencyCode {
     /// Returns the 3-character ASCII code for standard currencies.
     ///
     /// Returns `None` for non-standard (hex) currency codes.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_types::CurrencyCode;
+    ///
+    /// let usd = CurrencyCode::from_ascii("USD").unwrap();
+    /// assert_eq!(usd.as_ascii(), Some([b'U', b'S', b'D']));
+    ///
+    /// // Non-standard codes return None:
+    /// let hex_code = "0158415500000000000000000000000000000000";
+    /// let code = CurrencyCode::from_hex(hex_code).unwrap();
+    /// assert_eq!(code.as_ascii(), None);
+    /// ```
     #[must_use]
     pub fn as_ascii(&self) -> Option<[u8; 3]> {
         if !self.is_standard() {
@@ -152,6 +216,22 @@ impl core::fmt::Display for CurrencyCode {
 /// Uniquely identifies an MPT issuance on the ledger.
 ///
 /// In JSON, serialized as a 48-char uppercase hex string.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_types::MptIssuanceId;
+///
+/// // 48 hex chars = 24 bytes:
+/// let id = MptIssuanceId::from_hex(
+///     "000000010000000000000000AABBCCDDAABBCCDDAABBCCDD"
+/// ).unwrap();
+/// assert_eq!(id.as_bytes().len(), 24);
+///
+/// let json = serde_json::to_string(&id).unwrap();
+/// let decoded: MptIssuanceId = serde_json::from_str(&json).unwrap();
+/// assert_eq!(decoded, id);
+/// ```
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct MptIssuanceId([u8; 24]);
 
@@ -170,6 +250,21 @@ impl MptIssuanceId {
     /// # Errors
     ///
     /// Returns an error if the hex is invalid or the wrong length.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_types::MptIssuanceId;
+    ///
+    /// // 48 hex chars = 24 bytes:
+    /// let id = MptIssuanceId::from_hex(
+    ///     "000000010000000000000000AABBCCDDAABBCCDDAABBCCDD"
+    /// ).unwrap();
+    /// assert_eq!(id.as_bytes().len(), 24);
+    ///
+    /// // Wrong length returns an error:
+    /// assert!(MptIssuanceId::from_hex("ABAB").is_err());
+    /// ```
     pub fn from_hex(hex_str: &str) -> Result<Self, TypeError> {
         let bytes = hex::decode(hex_str).map_err(|e| TypeError::InvalidHex(e.to_string()))?;
         if bytes.len() != 24 {
@@ -231,6 +326,26 @@ impl From<[u8; 24]> for MptIssuanceId {
 /// - XRP: `{"currency": "XRP"}`
 /// - Issued: `{"currency": "USD", "issuer": "rHb9..."}`
 /// - MPT: `{"mpt_issuance_id": "0000..."}`
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_types::{AccountId, CurrencyCode, Issue};
+///
+/// // XRP as an asset:
+/// let xrp = Issue::Xrp;
+/// let json = serde_json::to_string(&xrp).unwrap();
+/// assert_eq!(json, r#"{"currency":"XRP"}"#);
+///
+/// // An issued currency asset:
+/// let issuer: AccountId = "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse().unwrap();
+/// let usd = Issue::Issued {
+///     currency: CurrencyCode::from_ascii("USD").unwrap(),
+///     issuer,
+/// };
+/// let json = serde_json::to_string(&usd).unwrap();
+/// assert!(json.contains("\"currency\":\"USD\""));
+/// ```
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum Issue {

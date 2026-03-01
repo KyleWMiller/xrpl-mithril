@@ -19,6 +19,28 @@ use xrpl_types::{AccountId, Amount, Blob, Hash256};
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/ledger-data/ledger-entry-types/escrow>
+///
+/// # Examples
+///
+/// Deserialize a time-based escrow from JSON:
+///
+/// ```
+/// use xrpl_models::ledger::Escrow;
+///
+/// let json = serde_json::json!({
+///     "LedgerEntryType": "Escrow",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "1000000",
+///     "FinishAfter": 700000000,
+///     "PreviousTxnID": "0000000000000000000000000000000000000000000000000000000000000000",
+///     "PreviousTxnLgrSeq": 10,
+///     "index": "2B6AC232AA4C4BE41BF49D2459FA4A0347E1B543A4C92FCEE0821C0201E2E9A8"
+/// });
+///
+/// let entry: Escrow = serde_json::from_value(json).unwrap();
+/// assert_eq!(entry.finish_after, Some(700000000));
+/// ```
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Escrow {
     /// The ledger entry type identifier. Always `"Escrow"`.

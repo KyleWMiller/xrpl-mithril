@@ -15,6 +15,25 @@
 /// Serde helper for fields that serialize as uppercase hex strings.
 ///
 /// Use with `#[serde(with = "crate::serde_helpers::hex_upper")]` on `Vec<u8>` fields.
+///
+/// # Examples
+///
+/// ```
+/// use serde::{Deserialize, Serialize};
+///
+/// #[derive(Serialize, Deserialize, PartialEq, Debug)]
+/// struct MyData {
+///     #[serde(with = "xrpl_types::serde_helpers::hex_upper")]
+///     pub payload: Vec<u8>,
+/// }
+///
+/// let data = MyData { payload: vec![0xCA, 0xFE] };
+/// let json = serde_json::to_string(&data).unwrap();
+/// assert_eq!(json, r#"{"payload":"CAFE"}"#);
+///
+/// let decoded: MyData = serde_json::from_str(&json).unwrap();
+/// assert_eq!(decoded, data);
+/// ```
 pub mod hex_upper {
     use serde::{Deserialize, Deserializer, Serializer};
 

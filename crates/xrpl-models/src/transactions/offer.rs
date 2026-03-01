@@ -24,6 +24,18 @@ use xrpl_types::Amount;
 /// offer with that sequence number from the same account before placing the
 /// new one.
 ///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::offer::OfferCreate;
+///
+/// let json = serde_json::json!({
+///     "TakerPays": "5000000",
+///     "TakerGets": "1000000"
+/// });
+/// let offer: OfferCreate = serde_json::from_value(json).unwrap();
+/// ```
+///
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/transactions/types/offercreate>
@@ -63,6 +75,18 @@ pub struct OfferCreate {
 /// Removes an existing offer from the XRPL decentralized exchange. The offer
 /// is identified by the sequence number of the [`OfferCreate`] transaction
 /// that created it. Only the account that created the offer can cancel it.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::offer::OfferCancel;
+///
+/// let json = serde_json::json!({
+///     "OfferSequence": 7
+/// });
+/// let cancel: OfferCancel = serde_json::from_value(json).unwrap();
+/// assert_eq!(cancel.offer_sequence, 7);
+/// ```
 ///
 /// # XRPL Documentation
 ///

@@ -19,6 +19,40 @@ use xrpl_types::{Hash256, IssuedAmount};
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/ledger-data/ledger-entry-types/ripplestate>
+///
+/// # Examples
+///
+/// Deserialize a trust line from JSON:
+///
+/// ```
+/// use xrpl_models::ledger::RippleState;
+///
+/// let json = serde_json::json!({
+///     "LedgerEntryType": "RippleState",
+///     "Balance": {
+///         "value": "10",
+///         "currency": "USD",
+///         "issuer": "rrrrrrrrrrrrrrrrrrrrBZbvji"
+///     },
+///     "LowLimit": {
+///         "value": "0",
+///         "currency": "USD",
+///         "issuer": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh"
+///     },
+///     "HighLimit": {
+///         "value": "100",
+///         "currency": "USD",
+///         "issuer": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe"
+///     },
+///     "Flags": 65536,
+///     "PreviousTxnID": "0000000000000000000000000000000000000000000000000000000000000000",
+///     "PreviousTxnLgrSeq": 100,
+///     "index": "2B6AC232AA4C4BE41BF49D2459FA4A0347E1B543A4C92FCEE0821C0201E2E9A8"
+/// });
+///
+/// let entry: RippleState = serde_json::from_value(json).unwrap();
+/// assert_eq!(entry.flags, 65536);
+/// ```
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct RippleState {
     /// The ledger entry type identifier. Always `"RippleState"`.

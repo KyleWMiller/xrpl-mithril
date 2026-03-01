@@ -17,6 +17,39 @@ const CLASSIC_ADDRESS_VERSION: u8 = 0;
 ///
 /// In JSON, serialized as a base58check classic address string
 /// (e.g., `"rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh"`).
+///
+/// # Examples
+///
+/// Parsing a classic address and converting back:
+///
+/// ```
+/// use xrpl_types::AccountId;
+///
+/// let account = AccountId::from_classic_address("rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh").unwrap();
+/// assert_eq!(account.to_classic_address(), "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh");
+/// ```
+///
+/// Using `FromStr` via `.parse()`:
+///
+/// ```
+/// use xrpl_types::AccountId;
+///
+/// let account: AccountId = "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse().unwrap();
+/// assert_eq!(format!("{account}"), "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh");
+/// ```
+///
+/// JSON round-trip:
+///
+/// ```
+/// use xrpl_types::AccountId;
+///
+/// let account: AccountId = "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse().unwrap();
+/// let json = serde_json::to_string(&account).unwrap();
+/// assert_eq!(json, "\"rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh\"");
+///
+/// let decoded: AccountId = serde_json::from_str(&json).unwrap();
+/// assert_eq!(decoded, account);
+/// ```
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct AccountId([u8; 20]);
 
@@ -25,6 +58,15 @@ impl AccountId {
     pub const LEN: usize = 20;
 
     /// Creates an `AccountId` from a 20-byte array.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_types::AccountId;
+    ///
+    /// let account = AccountId::from_bytes([0u8; 20]);
+    /// assert_eq!(account, AccountId::ZERO);
+    /// ```
     #[must_use]
     pub const fn from_bytes(bytes: [u8; 20]) -> Self {
         Self(bytes)
@@ -35,6 +77,19 @@ impl AccountId {
     /// # Errors
     ///
     /// Returns [`TypeError::InvalidAccountIdLength`] if the slice is not exactly 20 bytes.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_types::AccountId;
+    ///
+    /// let bytes = [0u8; 20];
+    /// let account = AccountId::from_slice(&bytes).unwrap();
+    /// assert_eq!(account, AccountId::ZERO);
+    ///
+    /// // Wrong length returns an error:
+    /// assert!(AccountId::from_slice(&[0u8; 10]).is_err());
+    /// ```
     pub fn from_slice(slice: &[u8]) -> Result<Self, TypeError> {
         let bytes: [u8; 20] = slice
             .try_into()
@@ -48,6 +103,18 @@ impl AccountId {
     ///
     /// Returns [`TypeError::InvalidAddress`] if the string is not a valid base58check
     /// classic address with version byte 0x00.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_types::AccountId;
+    ///
+    /// let account = AccountId::from_classic_address("rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh").unwrap();
+    /// assert_eq!(account.to_classic_address(), "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh");
+    ///
+    /// // Invalid addresses are rejected:
+    /// assert!(AccountId::from_classic_address("invalid").is_err());
+    /// ```
     pub fn from_classic_address(address: &str) -> Result<Self, TypeError> {
         let decoded = bs58::decode(address)
             .with_alphabet(bs58::Alphabet::RIPPLE)
@@ -65,6 +132,15 @@ impl AccountId {
     }
 
     /// Returns the classic address string (starting with 'r').
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_types::AccountId;
+    ///
+    /// let account = AccountId::from_classic_address("rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh").unwrap();
+    /// assert_eq!(account.to_classic_address(), "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh");
+    /// ```
     #[must_use]
     pub fn to_classic_address(&self) -> String {
         bs58::encode(self.0)
@@ -74,6 +150,15 @@ impl AccountId {
     }
 
     /// Returns the raw 20-byte representation.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_types::AccountId;
+    ///
+    /// let account = AccountId::ZERO;
+    /// assert_eq!(account.as_bytes(), &[0u8; 20]);
+    /// ```
     #[must_use]
     pub const fn as_bytes(&self) -> &[u8; 20] {
         &self.0

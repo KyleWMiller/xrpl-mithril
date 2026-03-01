@@ -17,6 +17,27 @@ use crate::error::CodecError;
 /// - tc < 16, fc >= 16: 2 bytes `(tc << 4) | 0x00, fc`
 /// - tc >= 16, fc < 16: 2 bytes `0x00 | fc, tc`
 /// - Both >= 16: 3 bytes `0x00, tc, fc`
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_codec::field_code::encode_field_id;
+///
+/// // TransactionType: type_code=1, field_code=2 -> single byte 0x12
+/// let mut buf = Vec::new();
+/// encode_field_id(1, 2, &mut buf);
+/// assert_eq!(buf, vec![0x12]);
+///
+/// // LastLedgerSequence: type_code=2, field_code=27 -> two bytes
+/// let mut buf = Vec::new();
+/// encode_field_id(2, 27, &mut buf);
+/// assert_eq!(buf, vec![0x20, 0x1B]);
+///
+/// // Both >= 16 -> three bytes
+/// let mut buf = Vec::new();
+/// encode_field_id(16, 16, &mut buf);
+/// assert_eq!(buf, vec![0x00, 0x10, 0x10]);
+/// ```
 pub fn encode_field_id(type_code: u16, field_code: u16, buf: &mut Vec<u8>) {
     let tc = type_code as u8;
     let fc = field_code as u8;
@@ -42,6 +63,29 @@ pub fn encode_field_id(type_code: u16, field_code: u16, buf: &mut Vec<u8>) {
 }
 
 /// Decode a field ID header from the data, returning (type_code, field_code, bytes_consumed).
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_codec::field_code::{encode_field_id, decode_field_id};
+///
+/// // Encode then decode round-trips correctly
+/// let mut buf = Vec::new();
+/// encode_field_id(1, 2, &mut buf); // TransactionType
+///
+/// let (type_code, field_code, consumed) = decode_field_id(&buf)?;
+/// assert_eq!(type_code, 1);
+/// assert_eq!(field_code, 2);
+/// assert_eq!(consumed, 1); // single-byte encoding
+///
+/// // Decode a two-byte field ID
+/// let mut buf = Vec::new();
+/// encode_field_id(2, 27, &mut buf); // LastLedgerSequence
+/// let (tc, fc, consumed) = decode_field_id(&buf)?;
+/// assert_eq!((tc, fc), (2, 27));
+/// assert_eq!(consumed, 2);
+/// # Ok::<(), xrpl_codec::error::CodecError>(())
+/// ```
 ///
 /// # Errors
 ///
@@ -107,6 +151,28 @@ pub const MAX_VL_LENGTH: usize = 918_744;
 /// - Length 193-12480: 2 bytes, encoding `length = 193 + (b1 - 193) * 256 + b2`
 /// - Length 12481-918744: 3 bytes, encoding `length = 12481 + (b1 - 241) * 65536 + b2 * 256 + b3`
 ///
+/// # Examples
+///
+/// ```
+/// use xrpl_codec::field_code::encode_vl_length;
+///
+/// // Small length (0-192): single byte
+/// let mut buf = Vec::new();
+/// encode_vl_length(20, &mut buf)?;
+/// assert_eq!(buf, vec![0x14]);
+///
+/// // Medium length (193-12480): two bytes
+/// let mut buf = Vec::new();
+/// encode_vl_length(200, &mut buf)?;
+/// assert_eq!(buf.len(), 2);
+///
+/// // Large length (12481-918744): three bytes
+/// let mut buf = Vec::new();
+/// encode_vl_length(12481, &mut buf)?;
+/// assert_eq!(buf.len(), 3);
+/// # Ok::<(), xrpl_codec::error::CodecError>(())
+/// ```
+///
 /// # Errors
 ///
 /// Returns [`CodecError::VlLengthOverflow`] if length exceeds 918,744.
@@ -134,6 +200,27 @@ pub fn encode_vl_length(length: usize, buf: &mut Vec<u8>) -> Result<(), CodecErr
 }
 
 /// Decode a variable-length prefix from the data, returning (length, bytes_consumed).
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_codec::field_code::{encode_vl_length, decode_vl_length};
+///
+/// // Round-trip: encode then decode
+/// let mut buf = Vec::new();
+/// encode_vl_length(100, &mut buf)?;
+/// let (length, consumed) = decode_vl_length(&buf)?;
+/// assert_eq!(length, 100);
+/// assert_eq!(consumed, 1); // single-byte encoding for length <= 192
+///
+/// // Two-byte round-trip
+/// let mut buf = Vec::new();
+/// encode_vl_length(1000, &mut buf)?;
+/// let (length, consumed) = decode_vl_length(&buf)?;
+/// assert_eq!(length, 1000);
+/// assert_eq!(consumed, 2);
+/// # Ok::<(), xrpl_codec::error::CodecError>(())
+/// ```
 ///
 /// # Errors
 ///

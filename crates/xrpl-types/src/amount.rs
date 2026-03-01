@@ -29,6 +29,19 @@ pub const DROPS_PER_XRP: u64 = 1_000_000;
 /// 1 XRP = 1,000,000 drops. Maximum: 100 billion XRP (10^17 drops).
 ///
 /// In JSON, serialized as a string of drops (e.g., `"1000000"` for 1 XRP).
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_types::XrpAmount;
+///
+/// let one_xrp = XrpAmount::from_drops(1_000_000).unwrap();
+/// assert_eq!(one_xrp.drops(), 1_000_000);
+/// assert_eq!(one_xrp, XrpAmount::ONE_XRP);
+///
+/// // Amounts exceeding the maximum supply are rejected:
+/// assert!(XrpAmount::from_drops(100_000_000_000_000_001).is_err());
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct XrpAmount(u64);
 
@@ -47,6 +60,15 @@ impl XrpAmount {
     /// # Errors
     ///
     /// Returns [`TypeError::XrpAmountOverflow`] if the value exceeds 10^17 drops.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_types::XrpAmount;
+    ///
+    /// let amount = XrpAmount::from_drops(5_000_000).unwrap(); // 5 XRP
+    /// assert_eq!(amount.drops(), 5_000_000);
+    /// ```
     pub const fn from_drops(drops: u64) -> Result<Self, TypeError> {
         if drops > MAX_XRP_DROPS {
             return Err(TypeError::XrpAmountOverflow(drops));
@@ -102,6 +124,28 @@ pub const MAX_IOU_EXPONENT: i8 = 80;
 /// serialization.
 ///
 /// In JSON, serialized as a decimal string (e.g., `"1.5"`, `"100"`, `"0"`).
+///
+/// # Examples
+///
+/// Creating from a decimal string (recommended):
+///
+/// ```
+/// use xrpl_types::IssuedValue;
+///
+/// let value = IssuedValue::from_decimal_string("1.5").unwrap();
+/// assert_eq!(value.to_decimal_string(), "1.5");
+/// assert!(value.is_positive());
+/// ```
+///
+/// Creating from normalized mantissa and exponent:
+///
+/// ```
+/// use xrpl_types::IssuedValue;
+///
+/// // 100 = 1_000_000_000_000_000 * 10^-13
+/// let value = IssuedValue::new(1_000_000_000_000_000, -13).unwrap();
+/// assert_eq!(value.to_decimal_string(), "100");
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct IssuedValue {
     /// Signed mantissa. For non-zero values: |mantissa| is in [10^15, 10^16).
@@ -125,6 +169,21 @@ impl IssuedValue {
     ///
     /// Returns [`TypeError::InvalidMantissa`] if the absolute mantissa is not in [10^15, 10^16)
     /// for non-zero values, or [`TypeError::InvalidExponent`] if the exponent is outside [-96, 80].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_types::IssuedValue;
+    ///
+    /// // 1.5 = 1_500_000_000_000_000 * 10^-15
+    /// let value = IssuedValue::new(1_500_000_000_000_000, -15).unwrap();
+    /// assert_eq!(value.mantissa(), 1_500_000_000_000_000);
+    /// assert_eq!(value.exponent(), -15);
+    ///
+    /// // Zero mantissa always yields ZERO:
+    /// let zero = IssuedValue::new(0, 0).unwrap();
+    /// assert!(zero.is_zero());
+    /// ```
     pub const fn new(mantissa: i64, exponent: i8) -> Result<Self, TypeError> {
         if mantissa == 0 {
             return Ok(Self::ZERO);
@@ -174,7 +233,17 @@ impl IssuedValue {
     /// Converts to a decimal string representation.
     ///
     /// Produces the minimal string representation without trailing zeros.
-    /// Examples: `"0"`, `"1.5"`, `"-100"`, `"0.001"`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_types::IssuedValue;
+    ///
+    /// assert_eq!(IssuedValue::ZERO.to_decimal_string(), "0");
+    ///
+    /// let val = IssuedValue::from_decimal_string("-0.001").unwrap();
+    /// assert_eq!(val.to_decimal_string(), "-0.001");
+    /// ```
     #[must_use]
     pub fn to_decimal_string(&self) -> String {
         if self.mantissa == 0 {
@@ -244,6 +313,18 @@ impl IssuedValue {
     /// # Errors
     ///
     /// Returns [`TypeError::InvalidMantissa`] if the value cannot be represented.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_types::IssuedValue;
+    ///
+    /// let value = IssuedValue::from_decimal_string("100").unwrap();
+    /// assert_eq!(value.to_decimal_string(), "100");
+    ///
+    /// let negative = IssuedValue::from_decimal_string("-1.5").unwrap();
+    /// assert!(negative.is_negative());
+    /// ```
     pub fn from_decimal_string(s: &str) -> Result<Self, TypeError> {
         let s = s.trim();
 
@@ -335,6 +416,23 @@ impl<'de> Deserialize<'de> for IssuedValue {
 /// Combines a value with a currency code and issuer account.
 ///
 /// In JSON: `{"value": "1.5", "currency": "USD", "issuer": "rHb9..."}`
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_types::{AccountId, CurrencyCode, IssuedAmount, IssuedValue};
+///
+/// let issuer: AccountId = "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse().unwrap();
+/// let amount = IssuedAmount {
+///     value: IssuedValue::from_decimal_string("1.5").unwrap(),
+///     currency: CurrencyCode::from_ascii("USD").unwrap(),
+///     issuer,
+/// };
+///
+/// let json = serde_json::to_string(&amount).unwrap();
+/// assert!(json.contains("\"value\":\"1.5\""));
+/// assert!(json.contains("\"currency\":\"USD\""));
+/// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct IssuedAmount {
     /// The amount value.
@@ -380,6 +478,20 @@ impl<'de> Deserialize<'de> for IssuedAmount {
 /// MPT amounts are simple signed integers combined with the issuance identifier.
 ///
 /// In JSON: `{"value": "100", "mpt_issuance_id": "0000..."}`
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_types::{MptAmount, MptIssuanceId};
+///
+/// let amount = MptAmount {
+///     value: 1000,
+///     mpt_issuance_id: MptIssuanceId::from_bytes([0xAB; 24]),
+/// };
+///
+/// let json = serde_json::to_string(&amount).unwrap();
+/// assert!(json.contains("\"value\":\"1000\""));
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct MptAmount {
     /// The token amount (signed 64-bit integer).
@@ -423,6 +535,33 @@ impl<'de> Deserialize<'de> for MptAmount {
 /// - XRP: `"1000000"` (string of drops)
 /// - Issued: `{"value": "1.5", "currency": "USD", "issuer": "rHb9..."}`
 /// - MPT: `{"value": "100", "mpt_issuance_id": "0000..."}`
+///
+/// # Examples
+///
+/// Converting from specific types using `From`:
+///
+/// ```
+/// use xrpl_types::{Amount, XrpAmount};
+///
+/// let xrp = XrpAmount::from_drops(1_000_000).unwrap();
+/// let amount: Amount = xrp.into();
+/// assert!(matches!(amount, Amount::Xrp(_)));
+/// ```
+///
+/// Deserializing from JSON auto-detects the variant:
+///
+/// ```
+/// use xrpl_types::Amount;
+///
+/// // XRP amounts are strings of drops:
+/// let xrp: Amount = serde_json::from_str("\"1000000\"").unwrap();
+/// assert!(matches!(xrp, Amount::Xrp(_)));
+///
+/// // Issued amounts are objects with "currency":
+/// let json = r#"{"value":"1.5","currency":"USD","issuer":"rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh"}"#;
+/// let iou: Amount = serde_json::from_str(json).unwrap();
+/// assert!(matches!(iou, Amount::Issued(_)));
+/// ```
 #[derive(Debug, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum Amount {

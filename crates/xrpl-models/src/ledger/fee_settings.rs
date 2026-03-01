@@ -19,6 +19,25 @@ use xrpl_types::Hash256;
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/ledger-data/ledger-entry-types/feesettings>
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::ledger::FeeSettings;
+///
+/// let json = serde_json::json!({
+///     "LedgerEntryType": "FeeSettings",
+///     "BaseFee": "A",
+///     "ReferenceFeeUnits": 10,
+///     "ReserveBase": 10000000,
+///     "ReserveIncrement": 2000000,
+///     "Flags": 0,
+///     "index": "4BC50C9B0D8515BE09A7627D12897A15FB64CBF90C71FFE5E1E4B3742C55E982"
+/// });
+///
+/// let entry: FeeSettings = serde_json::from_value(json).unwrap();
+/// assert_eq!(entry.reserve_base, 10000000);
+/// ```
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct FeeSettings {
     /// The ledger entry type identifier. Always `"FeeSettings"`.

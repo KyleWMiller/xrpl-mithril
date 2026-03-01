@@ -11,7 +11,7 @@ use tokio::sync::mpsc;
 
 /// A stream of subscription messages from the XRPL server.
 ///
-/// Created by [`WebSocketClient::subscribe`](crate::WebSocketClient::subscribe).
+/// Created by [`WebSocketClient::subscribe_stream`](crate::WebSocketClient::subscribe_stream).
 /// Implements [`futures::Stream`] for use with `.next().await`.
 ///
 /// # Examples

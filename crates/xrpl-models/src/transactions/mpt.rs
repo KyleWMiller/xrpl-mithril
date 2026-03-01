@@ -36,6 +36,21 @@ use xrpl_types::{AccountId, Blob};
 /// - `tfMPTCanTransfer` (0x0020) — Tokens may be transferred between accounts.
 /// - `tfMPTCanClawback` (0x0040) — Issuer can claw back tokens.
 ///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::mpt::MPTokenIssuanceCreate;
+///
+/// let json = serde_json::json!({
+///     "MaximumAmount": 1000000,
+///     "AssetScale": 2,
+///     "TransferFee": 100
+/// });
+/// let mpt: MPTokenIssuanceCreate = serde_json::from_value(json).unwrap();
+/// assert_eq!(mpt.max_amount, Some(1000000));
+/// assert_eq!(mpt.asset_scale, Some(2));
+/// ```
+///
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/transactions/types/mptokenissuancecreate>

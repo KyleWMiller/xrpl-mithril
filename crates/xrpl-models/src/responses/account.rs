@@ -6,6 +6,28 @@ use xrpl_types::{AccountId, Amount, Hash256};
 use crate::requests::Marker;
 
 /// Response from the `account_info` method.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::responses::account::AccountInfoResponse;
+///
+/// let json = serde_json::json!({
+///     "account_data": {
+///         "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///         "Balance": "10000000000",
+///         "Sequence": 1,
+///         "Flags": 0,
+///         "OwnerCount": 0
+///     },
+///     "ledger_index": 12345,
+///     "validated": true
+/// });
+///
+/// let response: AccountInfoResponse = serde_json::from_value(json).unwrap();
+/// assert_eq!(response.account_data.sequence, 1);
+/// assert_eq!(response.validated, Some(true));
+/// ```
 #[derive(Debug, Clone, Deserialize)]
 pub struct AccountInfoResponse {
     /// The account data from the ledger.
@@ -64,6 +86,27 @@ pub struct AccountRootData {
 }
 
 /// Response from the `account_lines` method.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::responses::account::AccountLinesResponse;
+///
+/// let json = serde_json::json!({
+///     "account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "lines": [{
+///         "account": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///         "balance": "10",
+///         "currency": "USD",
+///         "limit": "100",
+///         "limit_peer": "0"
+///     }]
+/// });
+///
+/// let response: AccountLinesResponse = serde_json::from_value(json).unwrap();
+/// assert_eq!(response.lines.len(), 1);
+/// assert_eq!(response.lines[0].currency, "USD");
+/// ```
 #[derive(Debug, Clone, Deserialize)]
 pub struct AccountLinesResponse {
     /// The queried account.
@@ -108,6 +151,27 @@ pub struct TrustLine {
 }
 
 /// Response from the `account_channels` method.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::responses::account::AccountChannelsResponse;
+///
+/// let json = serde_json::json!({
+///     "account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "channels": [{
+///         "channel_id": "ABC123",
+///         "account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///         "destination_account": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///         "amount": "10000000",
+///         "balance": "0",
+///         "settle_delay": 86400
+///     }]
+/// });
+///
+/// let response: AccountChannelsResponse = serde_json::from_value(json).unwrap();
+/// assert_eq!(response.channels.len(), 1);
+/// ```
 #[derive(Debug, Clone, Deserialize)]
 pub struct AccountChannelsResponse {
     /// The queried account.

@@ -25,6 +25,33 @@ use crate::error::WalletError;
 use crate::keypair::Wallet;
 
 /// A fully signed transaction ready for submission.
+///
+/// Contains the signed transaction JSON, its binary serialization as a hex
+/// string (`tx_blob`), and the computed transaction ID (`hash`).
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_wallet::{Wallet, Seed, Algorithm, sign};
+///
+/// let seed = Seed::from_passphrase("masterpassphrase");
+/// let wallet = Wallet::from_seed(&seed, Algorithm::Secp256k1).unwrap();
+///
+/// let tx = serde_json::json!({
+///     "TransactionType": "Payment",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "1000000",
+///     "Fee": "12",
+///     "Sequence": 1,
+///     "LastLedgerSequence": 100
+/// });
+/// let tx_map = tx.as_object().unwrap();
+///
+/// let signed = sign(tx_map, &wallet).unwrap();
+/// assert!(!signed.tx_blob.is_empty());
+/// assert_eq!(signed.hash.len(), 64); // 32-byte hash as hex
+/// ```
 #[derive(Debug, Clone)]
 pub struct SignedTransaction {
     /// The transaction JSON with `SigningPubKey` and `TxnSignature` attached.
@@ -36,6 +63,8 @@ pub struct SignedTransaction {
 }
 
 /// A single signer's contribution to a multi-signed transaction.
+///
+/// Produced by [`multi_sign`] and consumed by [`combine_signatures`].
 #[derive(Debug, Clone)]
 pub struct Signer {
     /// The signer's classic address.
@@ -56,6 +85,31 @@ pub struct Signer {
 /// because it is a signing field (`isSigningField=true`) and must be included in
 /// the data that is signed. This matches the behavior of xrpl.js, xrpl-py, and
 /// rippled's own signing logic.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_wallet::{Wallet, Seed, Algorithm, sign};
+///
+/// let seed = Seed::from_passphrase("masterpassphrase");
+/// let wallet = Wallet::from_seed(&seed, Algorithm::Secp256k1).unwrap();
+///
+/// let tx = serde_json::json!({
+///     "TransactionType": "Payment",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "1000000",
+///     "Fee": "12",
+///     "Sequence": 1,
+///     "LastLedgerSequence": 100
+/// });
+/// let tx_map = tx.as_object().unwrap();
+///
+/// let signed = sign(tx_map, &wallet).unwrap();
+/// assert!(signed.tx_json.contains_key("TxnSignature"));
+/// assert!(signed.tx_json.contains_key("SigningPubKey"));
+/// assert_eq!(signed.hash.len(), 64);
+/// ```
 ///
 /// # Errors
 ///
@@ -104,6 +158,30 @@ pub fn sign(
 /// this empty value is included in the signed data because `SigningPubKey`
 /// is a signing field.
 ///
+/// # Examples
+///
+/// ```
+/// use xrpl_wallet::{Wallet, Seed, Algorithm, multi_sign};
+///
+/// let seed = Seed::from_passphrase("masterpassphrase");
+/// let wallet = Wallet::from_seed(&seed, Algorithm::Secp256k1).unwrap();
+///
+/// let tx = serde_json::json!({
+///     "TransactionType": "Payment",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "1000000",
+///     "Fee": "12",
+///     "Sequence": 1,
+///     "LastLedgerSequence": 100
+/// });
+/// let tx_map = tx.as_object().unwrap();
+///
+/// let signer = multi_sign(tx_map, &wallet).unwrap();
+/// assert_eq!(signer.account, "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh");
+/// assert!(!signer.txn_signature.is_empty());
+/// ```
+///
 /// # Errors
 ///
 /// Returns [`WalletError`] if signing fails.
@@ -133,6 +211,39 @@ pub fn multi_sign(
 ///
 /// The signers are sorted by account address (lexicographic) as required by
 /// the XRPL protocol. The outer `SigningPubKey` is set to an empty string.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_wallet::{Wallet, Seed, Algorithm, multi_sign, combine_signatures};
+///
+/// let wallet1 = Wallet::from_seed(
+///     &Seed::from_passphrase("masterpassphrase"),
+///     Algorithm::Secp256k1,
+/// ).unwrap();
+/// let wallet2 = Wallet::from_seed(
+///     &Seed::from_passphrase("second-signer"),
+///     Algorithm::Secp256k1,
+/// ).unwrap();
+///
+/// let tx = serde_json::json!({
+///     "TransactionType": "Payment",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "1000000",
+///     "Fee": "12",
+///     "Sequence": 1,
+///     "LastLedgerSequence": 100
+/// });
+/// let tx_map = tx.as_object().unwrap();
+///
+/// let sig1 = multi_sign(tx_map, &wallet1).unwrap();
+/// let sig2 = multi_sign(tx_map, &wallet2).unwrap();
+///
+/// let combined = combine_signatures(tx_map, vec![sig1, sig2]).unwrap();
+/// assert!(combined.tx_json.contains_key("Signers"));
+/// assert_eq!(combined.tx_json["SigningPubKey"].as_str().unwrap(), "");
+/// ```
 ///
 /// # Errors
 ///

@@ -32,6 +32,32 @@ pub use crate::ledger::oracle::PriceData;
 /// fields retain their previous values. To update price data, include the
 /// full `price_data_series` — entries not included are removed from the oracle.
 ///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::oracle::OracleSet;
+///
+/// let json = serde_json::json!({
+///     "OracleDocumentID": 1,
+///     "Provider": "70726F7669646572",
+///     "AssetClass": "63757272656E6379",
+///     "LastUpdateTime": 743609014,
+///     "PriceDataSeries": [
+///         {
+///             "PriceData": {
+///                 "BaseAsset": "USD",
+///                 "QuoteAsset": "XRP",
+///                 "AssetPrice": 740,
+///                 "Scale": 1
+///             }
+///         }
+///     ]
+/// });
+/// let oracle: OracleSet = serde_json::from_value(json).unwrap();
+/// assert_eq!(oracle.oracle_document_id, 1);
+/// assert!(oracle.price_data_series.is_some());
+/// ```
+///
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/transactions/types/oracleset>

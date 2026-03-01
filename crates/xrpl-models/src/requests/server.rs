@@ -9,6 +9,16 @@ use crate::responses::server::{
 };
 
 /// Request the current transaction fee information.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::FeeRequest;
+///
+/// let request = FeeRequest {};
+/// let json = serde_json::to_value(&request).unwrap();
+/// assert_eq!(json, serde_json::json!({}));
+/// ```
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct FeeRequest {}
 
@@ -20,6 +30,14 @@ impl XrplRequest for FeeRequest {
 }
 
 /// Request detailed server information.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::ServerInfoRequest;
+///
+/// let request = ServerInfoRequest {};
+/// ```
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct ServerInfoRequest {}
 
@@ -31,6 +49,14 @@ impl XrplRequest for ServerInfoRequest {
 }
 
 /// Request server state information (lower-level than server_info).
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::ServerStateRequest;
+///
+/// let request = ServerStateRequest {};
+/// ```
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct ServerStateRequest {}
 
@@ -71,6 +97,14 @@ impl XrplRequest for ServerDefinitionsRequest {
 }
 
 /// Ping the server to confirm connectivity.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::PingRequest;
+///
+/// let request = PingRequest {};
+/// ```
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct PingRequest {}
 

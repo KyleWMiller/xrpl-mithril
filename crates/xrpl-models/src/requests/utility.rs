@@ -6,6 +6,14 @@ use super::XrplRequest;
 use crate::responses::utility::{JsonResponse, RandomResponse};
 
 /// Request a random 256-bit value from the server.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::RandomRequest;
+///
+/// let request = RandomRequest {};
+/// ```
 #[derive(Debug, Clone, Default, Serialize)]
 pub struct RandomRequest {}
 

@@ -77,6 +77,15 @@ impl Seed {
     /// Computes `SHA-512(passphrase)` and takes the first 16 bytes. This
     /// matches the behaviour of the XRPL `wallet_propose` command with a
     /// passphrase parameter.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_wallet::Seed;
+    ///
+    /// let seed = Seed::from_passphrase("masterpassphrase");
+    /// assert_eq!(seed.encode(), "snoPBrXtMeMyMHUVTgbuqAfg1SUTb");
+    /// ```
     #[must_use]
     pub fn from_passphrase(passphrase: &str) -> Self {
         let hash = Sha512::digest(passphrase.as_bytes());
@@ -86,6 +95,16 @@ impl Seed {
     }
 
     /// Decode a seed from a base58check-encoded string (starting with `s`).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_wallet::Seed;
+    ///
+    /// let seed = Seed::from_encoded("snoPBrXtMeMyMHUVTgbuqAfg1SUTb").unwrap();
+    /// // Re-encode to verify round-trip
+    /// assert_eq!(seed.encode(), "snoPBrXtMeMyMHUVTgbuqAfg1SUTb");
+    /// ```
     ///
     /// # Errors
     ///
@@ -133,6 +152,20 @@ impl Seed {
     }
 
     /// Derive a [`Keypair`] from this seed using the given algorithm.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_wallet::{Seed, Algorithm};
+    ///
+    /// let seed = Seed::from_passphrase("masterpassphrase");
+    /// let keypair = seed.derive_keypair(Algorithm::Secp256k1).unwrap();
+    /// assert_eq!(keypair.classic_address(), "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh");
+    ///
+    /// // Ed25519 derivation from the same seed produces a different address
+    /// let ed_keypair = seed.derive_keypair(Algorithm::Ed25519).unwrap();
+    /// assert_ne!(ed_keypair.classic_address(), keypair.classic_address());
+    /// ```
     ///
     /// # Errors
     ///

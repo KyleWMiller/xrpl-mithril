@@ -15,6 +15,24 @@ pub struct OracleIdentifier {
 }
 
 /// Request an aggregate price from multiple oracles.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::{GetAggregatePriceRequest, OracleIdentifier};
+///
+/// let request = GetAggregatePriceRequest {
+///     base_asset: "USD".to_string(),
+///     quote_asset: "EUR".to_string(),
+///     oracles: vec![OracleIdentifier {
+///         account: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".to_string(),
+///         oracle_document_id: 1,
+///     }],
+///     trim: None,
+///     trim_threshold: None,
+///     ledger_index: None,
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct GetAggregatePriceRequest {
     /// The base asset currency code.

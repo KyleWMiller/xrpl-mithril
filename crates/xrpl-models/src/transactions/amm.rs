@@ -49,6 +49,24 @@ impl crate::serde_helpers::StArrayElement for AuthAccount {
 /// The `trading_fee` is specified in units of 1/100,000 (i.e., a value of
 /// 1000 represents 1%). The maximum allowed fee is 1000 (1%).
 ///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::amm::AMMCreate;
+///
+/// let json = serde_json::json!({
+///     "Amount": "10000000",
+///     "Amount2": {
+///         "value": "100",
+///         "currency": "USD",
+///         "issuer": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh"
+///     },
+///     "TradingFee": 500
+/// });
+/// let amm: AMMCreate = serde_json::from_value(json).unwrap();
+/// assert_eq!(amm.trading_fee, 500);
+/// ```
+///
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/transactions/types/ammcreate>

@@ -46,6 +46,63 @@ const PATH_STEP_ISSUER: u8 = 0x20;
 /// If `for_signing` is true, fields where `is_signing_field == false` are excluded
 /// (e.g., TxnSignature, Signers).
 ///
+/// # Examples
+///
+/// Serialize a minimal Payment transaction:
+///
+/// ```
+/// use serde_json::json;
+/// use xrpl_codec::serializer::serialize_json_object;
+///
+/// let tx = json!({
+///     "TransactionType": "Payment",
+///     "Flags": 0u32,
+///     "Sequence": 1u32,
+///     "Fee": "12",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "1000000"
+/// });
+///
+/// let map = tx.as_object().expect("json object");
+/// let mut buf = Vec::new();
+/// serialize_json_object(map, &mut buf, false)?;
+///
+/// // First byte encodes TransactionType field header (type_code=1, field_code=2 -> 0x12)
+/// assert_eq!(buf[0], 0x12);
+/// # Ok::<(), xrpl_codec::error::CodecError>(())
+/// ```
+///
+/// Serialize for signing (excludes TxnSignature):
+///
+/// ```
+/// use serde_json::json;
+/// use xrpl_codec::serializer::serialize_json_object;
+///
+/// let tx = json!({
+///     "TransactionType": "Payment",
+///     "Sequence": 1u32,
+///     "Fee": "12",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "1000000",
+///     "SigningPubKey": "ED5F5AC43F527AE97194E860E5B28E6751B0B3BBEAC0780826AAF6DB9B3EE001",
+///     "TxnSignature": "DEADBEEF"
+/// });
+///
+/// let map = tx.as_object().expect("json object");
+///
+/// let mut full_buf = Vec::new();
+/// serialize_json_object(map, &mut full_buf, false)?;
+///
+/// let mut signing_buf = Vec::new();
+/// serialize_json_object(map, &mut signing_buf, true)?;
+///
+/// // Signing output is shorter because TxnSignature is excluded
+/// assert!(signing_buf.len() < full_buf.len());
+/// # Ok::<(), xrpl_codec::error::CodecError>(())
+/// ```
+///
 /// # Errors
 ///
 /// Returns [`CodecError`] if a field name is unknown, a value has the wrong type,

@@ -27,6 +27,19 @@ use xrpl_types::{AccountId, Blob};
 /// credential (e.g., KYC status, accredited investor, etc.). Its semantics
 /// are defined by the issuer and are not interpreted by the protocol.
 ///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::credential::CredentialCreate;
+///
+/// let json = serde_json::json!({
+///     "Subject": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "CredentialType": "4B5943"
+/// });
+/// let cred: CredentialCreate = serde_json::from_value(json).unwrap();
+/// assert_eq!(cred.subject.to_string(), "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe");
+/// ```
+///
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/transactions/types/credentialcreate>

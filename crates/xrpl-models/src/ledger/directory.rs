@@ -21,6 +21,26 @@ use xrpl_types::{AccountId, Hash160, Hash256};
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/ledger-data/ledger-entry-types/directorynode>
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::ledger::DirectoryNode;
+///
+/// let json = serde_json::json!({
+///     "LedgerEntryType": "DirectoryNode",
+///     "Flags": 0,
+///     "RootIndex": "0000000000000000000000000000000000000000000000000000000000000000",
+///     "Indexes": [
+///         "2B6AC232AA4C4BE41BF49D2459FA4A0347E1B543A4C92FCEE0821C0201E2E9A8"
+///     ],
+///     "Owner": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "index": "2B6AC232AA4C4BE41BF49D2459FA4A0347E1B543A4C92FCEE0821C0201E2E9A8"
+/// });
+///
+/// let entry: DirectoryNode = serde_json::from_value(json).unwrap();
+/// assert_eq!(entry.indexes.len(), 1);
+/// ```
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DirectoryNode {
     /// The ledger entry type identifier. Always `"DirectoryNode"`.

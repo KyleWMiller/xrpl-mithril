@@ -158,6 +158,16 @@ pub struct Wallet {
 impl Wallet {
     /// Create a wallet from a [`Seed`] and [`Algorithm`].
     ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_wallet::{Wallet, Algorithm, Seed};
+    ///
+    /// let seed = Seed::from_passphrase("masterpassphrase");
+    /// let wallet = Wallet::from_seed(&seed, Algorithm::Secp256k1).unwrap();
+    /// assert_eq!(wallet.classic_address(), "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh");
+    /// ```
+    ///
     /// # Errors
     ///
     /// Returns [`WalletError`] if key derivation fails.
@@ -171,6 +181,16 @@ impl Wallet {
     /// Defaults to secp256k1. Use [`Wallet::from_seed`] if you need to
     /// specify the algorithm explicitly.
     ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_wallet::Wallet;
+    ///
+    /// // Genesis account seed
+    /// let wallet = Wallet::from_seed_encoded("snoPBrXtMeMyMHUVTgbuqAfg1SUTb").unwrap();
+    /// assert_eq!(wallet.classic_address(), "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh");
+    /// ```
+    ///
     /// # Errors
     ///
     /// Returns [`WalletError`] if the seed is invalid or derivation fails.
@@ -180,6 +200,18 @@ impl Wallet {
     }
 
     /// Create a wallet from an encoded seed string with a specific algorithm.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_wallet::{Wallet, Algorithm};
+    ///
+    /// let wallet = Wallet::from_seed_encoded_with_algorithm(
+    ///     "snoPBrXtMeMyMHUVTgbuqAfg1SUTb",
+    ///     Algorithm::Secp256k1,
+    /// ).unwrap();
+    /// assert_eq!(wallet.classic_address(), "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh");
+    /// ```
     ///
     /// # Errors
     ///
@@ -194,6 +226,16 @@ impl Wallet {
 
     /// Generate a new wallet with a random seed.
     ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_wallet::{Wallet, Algorithm};
+    ///
+    /// let wallet = Wallet::generate(Algorithm::Ed25519).unwrap();
+    /// assert!(wallet.classic_address().starts_with('r'));
+    /// assert_eq!(wallet.public_key()[0], 0xED); // Ed25519 prefix
+    /// ```
+    ///
     /// # Errors
     ///
     /// Returns [`WalletError`] if key derivation fails (astronomically unlikely).
@@ -203,6 +245,17 @@ impl Wallet {
     }
 
     /// Wrap an existing [`Keypair`] in a `Wallet`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_wallet::{Wallet, Seed, Algorithm};
+    ///
+    /// let seed = Seed::from_passphrase("masterpassphrase");
+    /// let keypair = seed.derive_keypair(Algorithm::Secp256k1).unwrap();
+    /// let wallet = Wallet::from_keypair(keypair);
+    /// assert_eq!(wallet.classic_address(), "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh");
+    /// ```
     #[must_use]
     pub fn from_keypair(keypair: Keypair) -> Self {
         let account_id = keypair.account_id();

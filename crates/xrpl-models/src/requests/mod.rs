@@ -20,8 +20,8 @@ use xrpl_types::Hash256;
 /// Trait implemented by all typed XRPL RPC requests.
 ///
 /// Associates each request with its response type and method name, enabling
-/// the [`Client`](crate::Client) trait to provide fully typed request/response
-/// pairs.
+/// the `Client` trait (from the `xrpl-client` crate) to provide fully typed
+/// request/response pairs.
 pub trait XrplRequest: Serialize {
     /// The response type returned by this request.
     type Response: for<'de> Deserialize<'de>;
@@ -39,6 +39,22 @@ pub trait XrplRequest: Serialize {
 ///
 /// Used by most request types that accept a `ledger_index` or `ledger_hash`
 /// parameter.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::LedgerSpecifier;
+///
+/// // Use a named shortcut:
+/// let json = serde_json::to_value(&LedgerSpecifier::Named(
+///     xrpl_models::requests::LedgerShortcut::Validated,
+/// )).unwrap();
+/// assert_eq!(json, serde_json::json!("validated"));
+///
+/// // Use a specific ledger index:
+/// let json = serde_json::to_value(&LedgerSpecifier::Index(12345)).unwrap();
+/// assert_eq!(json, serde_json::json!(12345));
+/// ```
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 #[non_exhaustive]

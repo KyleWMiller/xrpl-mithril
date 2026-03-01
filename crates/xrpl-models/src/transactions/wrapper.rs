@@ -38,13 +38,27 @@ pub trait Signable: Serialize + Clone {
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```
 /// use xrpl_models::transactions::{Transaction, wrapper::UnsignedTransaction};
 ///
-/// let tx = Transaction::Payment { common, fields };
-/// let unsigned = UnsignedTransaction::new(tx);
-/// // Autofill fee, sequence, etc.
-/// // Then sign to produce a TypedSignedTransaction
+/// let tx_json = serde_json::json!({
+///     "TransactionType": "Payment",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Fee": "12",
+///     "Sequence": 1,
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "1000000"
+/// });
+/// let tx: Transaction = serde_json::from_value(tx_json).unwrap();
+/// let mut unsigned = UnsignedTransaction::new(tx);
+///
+/// // Autofill fields before signing
+/// unsigned.common_mut().last_ledger_sequence = Some(100);
+/// assert_eq!(unsigned.common().last_ledger_sequence, Some(100));
+///
+/// // Convert to JSON map for the signing pipeline
+/// let map = unsigned.to_json_map().unwrap();
+/// assert_eq!(map.get("TransactionType").and_then(|v| v.as_str()), Some("Payment"));
 /// ```
 #[derive(Debug, Clone)]
 pub struct UnsignedTransaction<T: Signable> {

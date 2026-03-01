@@ -41,6 +41,21 @@ pub struct BookOffer {
 }
 
 /// Response from the `deposit_authorized` method.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::responses::path::DepositAuthorizedResponse;
+///
+/// let json = serde_json::json!({
+///     "deposit_authorized": true,
+///     "source_account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "destination_account": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe"
+/// });
+///
+/// let response: DepositAuthorizedResponse = serde_json::from_value(json).unwrap();
+/// assert!(response.deposit_authorized);
+/// ```
 #[derive(Debug, Clone, Deserialize)]
 pub struct DepositAuthorizedResponse {
     /// Whether the deposit is authorized.

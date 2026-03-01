@@ -7,6 +7,19 @@ use super::{LedgerSpecifier, XrplRequest};
 use crate::responses::amm::AmmInfoResponse;
 
 /// Request information about an Automated Market Maker (AMM) instance.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::AmmInfoRequest;
+///
+/// let request = AmmInfoRequest {
+///     amm_account: None,
+///     asset: Some(xrpl_types::Issue::Xrp),
+///     asset2: None,
+///     ledger_index: None,
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct AmmInfoRequest {
     /// The AMM's account address.

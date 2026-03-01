@@ -3,6 +3,29 @@
 use serde::Deserialize;
 
 /// Response from the `fee` method.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::responses::server::FeeResponse;
+///
+/// let json = serde_json::json!({
+///     "current_ledger_size": "0",
+///     "current_queue_size": "0",
+///     "drops": {
+///         "base_fee": "10",
+///         "median_fee": "5000",
+///         "minimum_fee": "10",
+///         "open_ledger_fee": "10"
+///     },
+///     "expected_ledger_size": "1000",
+///     "ledger_current_index": 12345,
+///     "max_queue_size": "2000"
+/// });
+///
+/// let response: FeeResponse = serde_json::from_value(json).unwrap();
+/// assert_eq!(response.drops.base_fee, "10");
+/// ```
 #[derive(Debug, Clone, Deserialize)]
 pub struct FeeResponse {
     /// Current transaction cost in drops.
@@ -48,6 +71,23 @@ pub struct FeeLevels {
 }
 
 /// Response from the `server_info` method.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::responses::server::ServerInfoResponse;
+///
+/// let json = serde_json::json!({
+///     "info": {
+///         "build_version": "2.3.0",
+///         "server_state": "full",
+///         "complete_ledgers": "1-100000"
+///     }
+/// });
+///
+/// let response: ServerInfoResponse = serde_json::from_value(json).unwrap();
+/// assert_eq!(response.info.build_version, Some("2.3.0".to_string()));
+/// ```
 #[derive(Debug, Clone, Deserialize)]
 pub struct ServerInfoResponse {
     /// Server information.

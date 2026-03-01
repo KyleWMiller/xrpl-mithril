@@ -14,11 +14,54 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 /// `Domain`, `MemoType`, `MemoData`, `Fulfillment`, `Condition`, etc.
 ///
 /// In JSON, serialized as an uppercase hex string.
+///
+/// # Examples
+///
+/// Creating from raw bytes:
+///
+/// ```
+/// use xrpl_types::Blob;
+///
+/// let blob = Blob::new(vec![0xDE, 0xAD, 0xBE, 0xEF]);
+/// assert_eq!(blob.len(), 4);
+/// assert_eq!(format!("{blob}"), "DEADBEEF");
+/// ```
+///
+/// Creating from a hex string:
+///
+/// ```
+/// use xrpl_types::Blob;
+///
+/// let blob = Blob::from_hex("DEADBEEF").unwrap();
+/// assert_eq!(blob.as_bytes(), &[0xDE, 0xAD, 0xBE, 0xEF]);
+/// ```
+///
+/// JSON round-trip:
+///
+/// ```
+/// use xrpl_types::Blob;
+///
+/// let blob = Blob::new(vec![0xDE, 0xAD, 0xBE, 0xEF]);
+/// let json = serde_json::to_string(&blob).unwrap();
+/// assert_eq!(json, "\"DEADBEEF\"");
+///
+/// let decoded: Blob = serde_json::from_str(&json).unwrap();
+/// assert_eq!(decoded, blob);
+/// ```
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Blob(Vec<u8>);
 
 impl Blob {
     /// Creates a new `Blob` from a byte vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_types::Blob;
+    ///
+    /// let blob = Blob::new(vec![0x01, 0x02, 0x03]);
+    /// assert_eq!(blob.len(), 3);
+    /// ```
     #[must_use]
     pub const fn new(data: Vec<u8>) -> Self {
         Self(data)
@@ -30,11 +73,24 @@ impl Blob {
         Self(Vec::new())
     }
 
-    /// Creates a `Blob` from a hex string.
+    /// Creates a `Blob` from a hex string (accepts uppercase or lowercase).
     ///
     /// # Errors
     ///
-    /// Returns an error if the string is not valid hex.
+    /// Returns `TypeError::InvalidHex` if the string is not valid hex.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_types::Blob;
+    ///
+    /// let blob = Blob::from_hex("DEADBEEF").unwrap();
+    /// assert_eq!(blob.as_bytes(), &[0xDE, 0xAD, 0xBE, 0xEF]);
+    ///
+    /// // Lowercase hex is also accepted:
+    /// let blob2 = Blob::from_hex("deadbeef").unwrap();
+    /// assert_eq!(blob2, blob);
+    /// ```
     pub fn from_hex(hex_str: &str) -> Result<Self, crate::error::TypeError> {
         let bytes =
             hex::decode(hex_str).map_err(|e| crate::error::TypeError::InvalidHex(e.to_string()))?;

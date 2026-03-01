@@ -20,6 +20,31 @@ use crate::submit::{submit_and_wait, TransactionResult};
 /// signer in `xrpl-wallet`. The existing `xrpl_wallet::sign()` function is
 /// called internally.
 ///
+/// # Examples
+///
+/// ```no_run
+/// use xrpl_tx::builder::PaymentBuilder;
+/// use xrpl_tx::reliable::sign_transaction;
+/// use xrpl_wallet::{Wallet, Algorithm};
+/// use xrpl_types::{Amount, XrpAmount};
+///
+/// # fn example() -> Result<(), Box<dyn std::error::Error>> {
+/// let wallet = Wallet::from_seed_encoded("sEdT7wHTCLzDG7Ue4312Kp4QA389Xmb")?;
+///
+/// let unsigned = PaymentBuilder::new()
+///     .account(*wallet.account_id())
+///     .destination("rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe".parse()?)
+///     .amount(Amount::Xrp(XrpAmount::from_drops(1_000_000)?))
+///     .sequence(1)
+///     .build()?;
+///
+/// let signed = sign_transaction(&unsigned, &wallet)?;
+/// println!("TX hash: {}", signed.hash());
+/// println!("TX blob: {}", signed.tx_blob());
+/// # Ok(())
+/// # }
+/// ```
+///
 /// # Errors
 ///
 /// Returns [`TxError`] if JSON serialization or signing fails.
@@ -43,6 +68,31 @@ pub fn sign_transaction<T: Signable>(
 /// 1. Autofills missing Fee, Sequence, and LastLedgerSequence
 /// 2. Signs with the provided wallet
 /// 3. Submits and waits for validation
+///
+/// # Examples
+///
+/// ```no_run
+/// use xrpl_tx::builder::PaymentBuilder;
+/// use xrpl_tx::reliable::submit_transaction;
+/// use xrpl_client::JsonRpcClient;
+/// use xrpl_wallet::{Wallet, Algorithm};
+/// use xrpl_types::{Amount, XrpAmount};
+///
+/// # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+/// let client = JsonRpcClient::new("https://s.altnet.rippletest.net:51234")?;
+/// let wallet = Wallet::from_seed_encoded("sEdT7wHTCLzDG7Ue4312Kp4QA389Xmb")?;
+///
+/// let unsigned = PaymentBuilder::new()
+///     .account(*wallet.account_id())
+///     .destination("rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe".parse()?)
+///     .amount(Amount::Xrp(XrpAmount::from_drops(1_000_000)?))
+///     .build()?;
+///
+/// let result = submit_transaction(&client, unsigned, &wallet).await?;
+/// println!("Validated in ledger {}: {}", result.ledger_index, result.result_code);
+/// # Ok(())
+/// # }
+/// ```
 ///
 /// # Errors
 ///

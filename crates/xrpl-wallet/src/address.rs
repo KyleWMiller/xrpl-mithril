@@ -26,9 +26,17 @@ use crate::error::WalletError;
 /// - secp256k1: compressed SEC1 encoding (starts with `0x02` or `0x03`)
 /// - Ed25519: `0xED` prefix + 32-byte key
 ///
-/// # Errors
+/// # Examples
 ///
-/// Returns [`WalletError::InvalidPublicKey`] if the key is not 33 bytes.
+/// ```
+/// use xrpl_wallet::{Seed, Algorithm};
+/// use xrpl_wallet::address::derive_account_id;
+///
+/// let seed = Seed::from_passphrase("masterpassphrase");
+/// let keypair = seed.derive_keypair(Algorithm::Secp256k1).unwrap();
+/// let account_id = derive_account_id(keypair.public_key());
+/// assert_eq!(account_id.to_classic_address(), "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh");
+/// ```
 #[must_use]
 pub fn derive_account_id(public_key: &[u8]) -> AccountId {
     let sha_hash = Sha256::digest(public_key);
@@ -102,6 +110,21 @@ pub fn encode_x_address(account_id: &AccountId, tag: Option<u32>, is_test: bool)
 
 /// Decode an X-address into its components: account ID, optional tag, and
 /// test network flag.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_types::AccountId;
+/// use xrpl_wallet::address::{encode_x_address, decode_x_address};
+///
+/// let account = AccountId::from_classic_address("rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh").unwrap();
+/// let x_addr = encode_x_address(&account, Some(12345), false);
+///
+/// let (decoded_id, tag, is_test) = decode_x_address(&x_addr).unwrap();
+/// assert_eq!(decoded_id, account);
+/// assert_eq!(tag, Some(12345));
+/// assert!(!is_test);
+/// ```
 ///
 /// # Errors
 ///

@@ -15,6 +15,27 @@ compile_error!(
 use crate::error::WalletError;
 
 /// The two signature algorithms supported by the XRPL.
+///
+/// Most XRPL accounts use [`Secp256k1`](Algorithm::Secp256k1). Choose
+/// [`Ed25519`](Algorithm::Ed25519) for faster signing and smaller keys.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_wallet::{Wallet, Algorithm};
+///
+/// // secp256k1 is the most widely used on the XRPL
+/// let secp_wallet = Wallet::generate(Algorithm::Secp256k1).unwrap();
+/// assert_eq!(secp_wallet.algorithm(), Algorithm::Secp256k1);
+///
+/// // Ed25519 produces public keys prefixed with 0xED
+/// let ed_wallet = Wallet::generate(Algorithm::Ed25519).unwrap();
+/// assert_eq!(ed_wallet.public_key()[0], 0xED);
+///
+/// // Display shows the algorithm name
+/// assert_eq!(format!("{}", Algorithm::Secp256k1), "secp256k1");
+/// assert_eq!(format!("{}", Algorithm::Ed25519), "ed25519");
+/// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 #[non_exhaustive]
 pub enum Algorithm {

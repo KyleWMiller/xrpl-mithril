@@ -9,6 +9,18 @@ use crate::responses::nft::{
 };
 
 /// Request information about a specific NFT.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::NftInfoRequest;
+/// use xrpl_types::Hash256;
+///
+/// let request = NftInfoRequest {
+///     nft_id: Hash256::from_hex("000B013A95F14B0044F78A264E41713C64B5F89242540EE208C3098E00000D65").unwrap(),
+///     ledger_index: None,
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct NftInfoRequest {
     /// The NFToken ID to query.
@@ -26,6 +38,20 @@ impl XrplRequest for NftInfoRequest {
 }
 
 /// Request outstanding buy offers for an NFT.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::NftBuyOffersRequest;
+/// use xrpl_types::Hash256;
+///
+/// let request = NftBuyOffersRequest {
+///     nft_id: Hash256::from_hex("000B013A95F14B0044F78A264E41713C64B5F89242540EE208C3098E00000D65").unwrap(),
+///     ledger_index: None,
+///     limit: None,
+///     marker: None,
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct NftBuyOffersRequest {
     /// The NFToken ID.
@@ -49,6 +75,20 @@ impl XrplRequest for NftBuyOffersRequest {
 }
 
 /// Request outstanding sell offers for an NFT.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::NftSellOffersRequest;
+/// use xrpl_types::Hash256;
+///
+/// let request = NftSellOffersRequest {
+///     nft_id: Hash256::from_hex("000B013A95F14B0044F78A264E41713C64B5F89242540EE208C3098E00000D65").unwrap(),
+///     ledger_index: None,
+///     limit: None,
+///     marker: None,
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct NftSellOffersRequest {
     /// The NFToken ID.
@@ -72,6 +112,24 @@ impl XrplRequest for NftSellOffersRequest {
 }
 
 /// Request the transaction history for an NFT.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::NftHistoryRequest;
+/// use xrpl_types::Hash256;
+///
+/// let request = NftHistoryRequest {
+///     nft_id: Hash256::from_hex("000B013A95F14B0044F78A264E41713C64B5F89242540EE208C3098E00000D65").unwrap(),
+///     ledger_index: None,
+///     ledger_index_min: None,
+///     ledger_index_max: None,
+///     binary: None,
+///     forward: None,
+///     limit: None,
+///     marker: None,
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct NftHistoryRequest {
     /// The NFToken ID.

@@ -44,6 +44,31 @@ impl StArrayElement for VoteEntry {
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/ledger-data/ledger-entry-types/amm>
+///
+/// # Examples
+///
+/// Deserialize an AMM entry from JSON:
+///
+/// ```
+/// use xrpl_models::ledger::Amm;
+///
+/// let json = serde_json::json!({
+///     "LedgerEntryType": "AMM",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Asset": {"currency": "XRP"},
+///     "Asset2": {"currency": "USD", "issuer": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe"},
+///     "LPTokenBalance": {
+///         "value": "1000",
+///         "currency": "USD",
+///         "issuer": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe"
+///     },
+///     "TradingFee": 500,
+///     "index": "2B6AC232AA4C4BE41BF49D2459FA4A0347E1B543A4C92FCEE0821C0201E2E9A8"
+/// });
+///
+/// let entry: Amm = serde_json::from_value(json).unwrap();
+/// assert_eq!(entry.trading_fee, 500);
+/// ```
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Amm {
     /// The ledger entry type identifier. Always `"AMM"`.

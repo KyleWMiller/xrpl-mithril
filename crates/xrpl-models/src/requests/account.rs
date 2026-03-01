@@ -11,6 +11,24 @@ use crate::responses::account::{
 };
 
 /// Request information about an account.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::{AccountInfoRequest, LedgerSpecifier, LedgerShortcut};
+/// use xrpl_types::AccountId;
+///
+/// let request = AccountInfoRequest {
+///     account: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse().unwrap(),
+///     ledger_index: Some(LedgerSpecifier::Named(LedgerShortcut::Validated)),
+///     queue: None,
+///     signer_lists: None,
+/// };
+///
+/// let json = serde_json::to_value(&request).unwrap();
+/// assert_eq!(json["account"], "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh");
+/// assert_eq!(json["ledger_index"], "validated");
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct AccountInfoRequest {
     /// The account to query.
@@ -34,6 +52,23 @@ impl XrplRequest for AccountInfoRequest {
 }
 
 /// Request trust lines for an account.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::AccountLinesRequest;
+///
+/// let request = AccountLinesRequest {
+///     account: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse().unwrap(),
+///     ledger_index: None,
+///     peer: None,
+///     limit: Some(10),
+///     marker: None,
+/// };
+///
+/// let json = serde_json::to_value(&request).unwrap();
+/// assert_eq!(json["limit"], 10);
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct AccountLinesRequest {
     /// The account to query.
@@ -60,6 +95,23 @@ impl XrplRequest for AccountLinesRequest {
 }
 
 /// Request payment channels where an account is the source or destination.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::AccountChannelsRequest;
+///
+/// let request = AccountChannelsRequest {
+///     account: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse().unwrap(),
+///     destination_account: None,
+///     ledger_index: None,
+///     limit: None,
+///     marker: None,
+/// };
+///
+/// let json = serde_json::to_value(&request).unwrap();
+/// assert_eq!(json["account"], "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh");
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct AccountChannelsRequest {
     /// The account to query.
@@ -86,6 +138,17 @@ impl XrplRequest for AccountChannelsRequest {
 }
 
 /// Request the currencies an account can send or receive.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::AccountCurrenciesRequest;
+///
+/// let request = AccountCurrenciesRequest {
+///     account: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse().unwrap(),
+///     ledger_index: None,
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct AccountCurrenciesRequest {
     /// The account to query.
@@ -103,6 +166,19 @@ impl XrplRequest for AccountCurrenciesRequest {
 }
 
 /// Request NFTs owned by an account.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::AccountNftsRequest;
+///
+/// let request = AccountNftsRequest {
+///     account: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse().unwrap(),
+///     ledger_index: None,
+///     limit: None,
+///     marker: None,
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct AccountNftsRequest {
     /// The account to query.
@@ -126,6 +202,20 @@ impl XrplRequest for AccountNftsRequest {
 }
 
 /// Request objects owned by an account (offers, trust lines, etc.).
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::AccountObjectsRequest;
+///
+/// let request = AccountObjectsRequest {
+///     account: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse().unwrap(),
+///     object_type: Some("offer".to_string()),
+///     ledger_index: None,
+///     limit: None,
+///     marker: None,
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct AccountObjectsRequest {
     /// The account to query.
@@ -152,6 +242,19 @@ impl XrplRequest for AccountObjectsRequest {
 }
 
 /// Request current offers placed by an account.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::AccountOffersRequest;
+///
+/// let request = AccountOffersRequest {
+///     account: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse().unwrap(),
+///     ledger_index: None,
+///     limit: None,
+///     marker: None,
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct AccountOffersRequest {
     /// The account to query.
@@ -175,6 +278,23 @@ impl XrplRequest for AccountOffersRequest {
 }
 
 /// Request an account's transaction history.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::AccountTxRequest;
+///
+/// let request = AccountTxRequest {
+///     account: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse().unwrap(),
+///     ledger_index: None,
+///     ledger_index_min: Some(-1),
+///     ledger_index_max: Some(-1),
+///     binary: None,
+///     forward: None,
+///     limit: Some(5),
+///     marker: None,
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct AccountTxRequest {
     /// The account to query.
@@ -210,6 +330,18 @@ impl XrplRequest for AccountTxRequest {
 }
 
 /// Request total balances issued by an account (gateway).
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::GatewayBalancesRequest;
+///
+/// let request = GatewayBalancesRequest {
+///     account: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse().unwrap(),
+///     ledger_index: None,
+///     hotwallet: None,
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct GatewayBalancesRequest {
     /// The issuing account.
@@ -230,6 +362,20 @@ impl XrplRequest for GatewayBalancesRequest {
 }
 
 /// Check an account's default ripple settings.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::requests::NorippleCheckRequest;
+///
+/// let request = NorippleCheckRequest {
+///     account: "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse().unwrap(),
+///     role: "gateway".to_string(),
+///     ledger_index: None,
+///     limit: None,
+///     transactions: Some(true),
+/// };
+/// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct NorippleCheckRequest {
     /// The account to check.

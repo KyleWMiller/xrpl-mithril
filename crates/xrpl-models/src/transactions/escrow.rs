@@ -23,6 +23,21 @@ use xrpl_types::{AccountId, Amount, Blob};
 /// escrow can eventually be finished. If `cancel_after` is provided, it must
 /// be after `finish_after`.
 ///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::escrow::EscrowCreate;
+///
+/// let json = serde_json::json!({
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "10000000",
+///     "FinishAfter": 533257958,
+///     "CancelAfter": 533344358
+/// });
+/// let escrow: EscrowCreate = serde_json::from_value(json).unwrap();
+/// assert_eq!(escrow.finish_after, Some(533257958));
+/// ```
+///
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/transactions/types/escrowcreate>
@@ -92,6 +107,19 @@ pub struct EscrowCreate {
 /// Anyone may submit an EscrowFinish, not just the escrow creator or
 /// destination, as long as the conditions are met.
 ///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::escrow::EscrowFinish;
+///
+/// let json = serde_json::json!({
+///     "Owner": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "OfferSequence": 7
+/// });
+/// let finish: EscrowFinish = serde_json::from_value(json).unwrap();
+/// assert_eq!(finish.offer_sequence, 7);
+/// ```
+///
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/transactions/types/escrowfinish>
@@ -131,6 +159,19 @@ pub struct EscrowFinish {
 /// Returns escrowed funds to the original sender. This is only valid if the
 /// escrow's `cancel_after` time has passed. Anyone may submit an
 /// EscrowCancel once the cancellation time has elapsed.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::escrow::EscrowCancel;
+///
+/// let json = serde_json::json!({
+///     "Owner": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "OfferSequence": 7
+/// });
+/// let cancel: EscrowCancel = serde_json::from_value(json).unwrap();
+/// assert_eq!(cancel.offer_sequence, 7);
+/// ```
 ///
 /// # XRPL Documentation
 ///

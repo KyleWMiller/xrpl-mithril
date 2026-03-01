@@ -1,3 +1,4 @@
+#![doc(html_logo_url = "https://raw.githubusercontent.com/KyleWMiller/xrpl-mithril/main/assets/logo.png")]
 //! Transaction types, ledger objects, and request/response types for the XRP Ledger.
 //!
 //! This crate defines the data structures for all XRPL protocol objects:

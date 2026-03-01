@@ -31,6 +31,22 @@ use xrpl_types::amount::IssuedAmount;
 /// | `tfSetFreeze`       | 0x00100000  | Freeze the trust line.                        |
 /// | `tfClearFreeze`     | 0x00200000  | Unfreeze the trust line.                      |
 ///
+/// # Examples
+///
+/// ```
+/// use xrpl_models::transactions::trust_set::TrustSet;
+///
+/// let json = serde_json::json!({
+///     "LimitAmount": {
+///         "value": "1000000",
+///         "currency": "USD",
+///         "issuer": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh"
+///     }
+/// });
+/// let trust: TrustSet = serde_json::from_value(json).unwrap();
+/// assert_eq!(trust.limit_amount.currency.to_string(), "USD");
+/// ```
+///
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/transactions/types/trustset>

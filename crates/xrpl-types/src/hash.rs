@@ -85,7 +85,7 @@ macro_rules! define_hash_type {
                 Ok(Self(bytes))
             }
 
-            /// Creates from a hex string.
+            /// Creates from a hex string (accepts uppercase or lowercase).
             ///
             /// # Errors
             ///
@@ -140,6 +140,15 @@ define_hash_type!(
     /// A 128-bit hash (16 bytes). XRPL type code 4.
     ///
     /// Used for `EmailHash` fields.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use xrpl_types::Hash128;
+    ///
+    /// let hash = Hash128::from_hex("00000000000000000000000000000000").unwrap();
+    /// assert!(hash.is_zero());
+    /// ```
     Hash128,
     16,
     serde
@@ -159,6 +168,47 @@ define_hash_type!(
     ///
     /// The most common hash type, used for transaction hashes, ledger hashes,
     /// `PreviousTxnID`, `AccountTxnID`, `InvoiceID`, `Channel`, etc.
+    ///
+    /// # Examples
+    ///
+    /// Creating from a hex string:
+    ///
+    /// ```
+    /// use xrpl_types::Hash256;
+    ///
+    /// let hash = Hash256::from_hex(
+    ///     "C53ECF838647FA5A4C780377025FEC7999AB4182590510CA461444B207AB74A9"
+    /// ).unwrap();
+    /// assert_eq!(hash.as_bytes().len(), 32);
+    /// assert!(!hash.is_zero());
+    /// ```
+    ///
+    /// Display outputs uppercase hex:
+    ///
+    /// ```
+    /// use xrpl_types::Hash256;
+    ///
+    /// let hash = Hash256::from_hex(
+    ///     "C53ECF838647FA5A4C780377025FEC7999AB4182590510CA461444B207AB74A9"
+    /// ).unwrap();
+    /// assert_eq!(
+    ///     format!("{hash}"),
+    ///     "C53ECF838647FA5A4C780377025FEC7999AB4182590510CA461444B207AB74A9"
+    /// );
+    /// ```
+    ///
+    /// JSON round-trip:
+    ///
+    /// ```
+    /// use xrpl_types::Hash256;
+    ///
+    /// let hash = Hash256::from_hex(
+    ///     "C53ECF838647FA5A4C780377025FEC7999AB4182590510CA461444B207AB74A9"
+    /// ).unwrap();
+    /// let json = serde_json::to_string(&hash).unwrap();
+    /// let decoded: Hash256 = serde_json::from_str(&json).unwrap();
+    /// assert_eq!(decoded, hash);
+    /// ```
     Hash256,
     32,
     serde

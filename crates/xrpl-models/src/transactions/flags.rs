@@ -2,6 +2,25 @@
 //!
 //! Each transaction type may have specific flags that modify its behavior.
 //! These are set in the `Flags` field (a `UInt32`).
+//!
+//! # Examples
+//!
+//! ```
+//! use xrpl_models::transactions::flags::{PaymentFlags, OfferCreateFlags};
+//!
+//! // Combine flags with bitwise OR
+//! let flags = PaymentFlags::PARTIAL_PAYMENT | PaymentFlags::LIMIT_QUALITY;
+//! assert!(flags.contains(PaymentFlags::PARTIAL_PAYMENT));
+//!
+//! // Convert to the raw u32 for the transaction's Flags field
+//! let raw: u32 = flags.bits();
+//! assert_eq!(raw, 0x0002_0000 | 0x0004_0000);
+//!
+//! // Check individual offer flags
+//! let offer_flags = OfferCreateFlags::IMMEDIATE_OR_CANCEL;
+//! assert!(offer_flags.contains(OfferCreateFlags::IMMEDIATE_OR_CANCEL));
+//! assert!(!offer_flags.contains(OfferCreateFlags::FILL_OR_KILL));
+//! ```
 
 use bitflags::bitflags;
 

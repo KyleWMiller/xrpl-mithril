@@ -18,6 +18,30 @@ use xrpl_types::{AccountId, Amount, Hash256};
 /// # XRPL Documentation
 ///
 /// <https://xrpl.org/docs/references/protocol/ledger-data/ledger-entry-types/offer>
+///
+/// # Examples
+///
+/// Deserialize a DEX offer from JSON:
+///
+/// ```
+/// use xrpl_models::ledger::Offer;
+///
+/// let json = serde_json::json!({
+///     "LedgerEntryType": "Offer",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Sequence": 7,
+///     "Flags": 0,
+///     "TakerPays": "5000000",
+///     "TakerGets": "1000000",
+///     "BookDirectory": "0000000000000000000000000000000000000000000000000000000000000000",
+///     "PreviousTxnID": "0000000000000000000000000000000000000000000000000000000000000000",
+///     "PreviousTxnLgrSeq": 50,
+///     "index": "2B6AC232AA4C4BE41BF49D2459FA4A0347E1B543A4C92FCEE0821C0201E2E9A8"
+/// });
+///
+/// let entry: Offer = serde_json::from_value(json).unwrap();
+/// assert_eq!(entry.sequence, 7);
+/// ```
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Offer {
     /// The ledger entry type identifier. Always `"Offer"`.

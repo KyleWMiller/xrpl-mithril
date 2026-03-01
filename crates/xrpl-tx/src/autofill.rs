@@ -1,19 +1,27 @@
-//! Transaction autofill — populates Fee, Sequence, and LastLedgerSequence
+//! Transaction autofill -- populates Fee, Sequence, and LastLedgerSequence
 //! by querying the network.
 //!
 //! # Examples
 //!
-//! ```ignore
+//! ```no_run
 //! use xrpl_tx::autofill::autofill;
+//! use xrpl_tx::builder::PaymentBuilder;
+//! use xrpl_client::JsonRpcClient;
+//! use xrpl_types::{Amount, XrpAmount};
+//!
+//! # async fn example() -> Result<(), Box<dyn std::error::Error>> {
+//! let client = JsonRpcClient::new("https://s.altnet.rippletest.net:51234")?;
 //!
 //! let mut unsigned = PaymentBuilder::new()
-//!     .account(account)
-//!     .destination(dest)
-//!     .amount(amount)
+//!     .account("rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse()?)
+//!     .destination("rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe".parse()?)
+//!     .amount(Amount::Xrp(XrpAmount::from_drops(1_000_000)?))
 //!     .build()?;
 //!
 //! autofill(&client, &mut unsigned).await?;
-//! // Fee, Sequence, and LastLedgerSequence are now set
+//! // Fee, Sequence, and LastLedgerSequence are now populated
+//! # Ok(())
+//! # }
 //! ```
 
 use xrpl_client::Client;

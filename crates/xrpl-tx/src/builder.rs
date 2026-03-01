@@ -252,6 +252,28 @@ impl PaymentBuilder {
 // ---------------------------------------------------------------------------
 
 /// Builder for TrustSet transactions.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_tx::builder::TrustSetBuilder;
+/// use xrpl_types::{IssuedAmount, IssuedValue, CurrencyCode};
+///
+/// # fn example() -> Result<(), Box<dyn std::error::Error>> {
+/// let issuer = "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe".parse()?;
+/// let limit = IssuedAmount {
+///     value: IssuedValue::from_decimal_string("1000000")?,
+///     currency: CurrencyCode::from_ascii("USD")?,
+///     issuer,
+/// };
+///
+/// let unsigned = TrustSetBuilder::new()
+///     .account("rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse()?)
+///     .limit_amount(limit)
+///     .build()?;
+/// # Ok(())
+/// # }
+/// ```
 #[derive(Debug, Clone, Default)]
 pub struct TrustSetBuilder {
     common: CommonBuilder,
@@ -317,6 +339,28 @@ impl TrustSetBuilder {
 // ---------------------------------------------------------------------------
 
 /// Builder for OfferCreate transactions.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_tx::builder::OfferCreateBuilder;
+/// use xrpl_types::{Amount, XrpAmount, IssuedAmount, IssuedValue, CurrencyCode};
+///
+/// # fn example() -> Result<(), Box<dyn std::error::Error>> {
+/// let issuer = "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe".parse()?;
+///
+/// let unsigned = OfferCreateBuilder::new()
+///     .account("rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse()?)
+///     .taker_pays(Amount::Issued(IssuedAmount {
+///         value: IssuedValue::from_decimal_string("100")?,
+///         currency: CurrencyCode::from_ascii("USD")?,
+///         issuer,
+///     }))
+///     .taker_gets(Amount::Xrp(XrpAmount::from_drops(50_000_000)?))
+///     .build()?;
+/// # Ok(())
+/// # }
+/// ```
 #[derive(Debug, Clone, Default)]
 pub struct OfferCreateBuilder {
     common: CommonBuilder,
@@ -394,6 +438,24 @@ impl OfferCreateBuilder {
 // ---------------------------------------------------------------------------
 
 /// Builder for EscrowCreate transactions.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_tx::builder::EscrowCreateBuilder;
+/// use xrpl_types::{Amount, XrpAmount};
+///
+/// # fn example() -> Result<(), Box<dyn std::error::Error>> {
+/// let unsigned = EscrowCreateBuilder::new()
+///     .account("rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse()?)
+///     .destination("rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe".parse()?)
+///     .amount(Amount::Xrp(XrpAmount::from_drops(10_000_000)?))
+///     .finish_after(820_000_000)   // Ripple epoch timestamp
+///     .cancel_after(830_000_000)
+///     .build()?;
+/// # Ok(())
+/// # }
+/// ```
 #[derive(Debug, Clone, Default)]
 pub struct EscrowCreateBuilder {
     common: CommonBuilder,
@@ -489,6 +551,29 @@ impl EscrowCreateBuilder {
 // ---------------------------------------------------------------------------
 
 /// Builder for AMMCreate transactions.
+///
+/// # Examples
+///
+/// ```
+/// use xrpl_tx::builder::AmmCreateBuilder;
+/// use xrpl_types::{Amount, XrpAmount, IssuedAmount, IssuedValue, CurrencyCode};
+///
+/// # fn example() -> Result<(), Box<dyn std::error::Error>> {
+/// let issuer = "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe".parse()?;
+///
+/// let unsigned = AmmCreateBuilder::new()
+///     .account("rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh".parse()?)
+///     .amount(Amount::Xrp(XrpAmount::from_drops(10_000_000)?))
+///     .amount2(Amount::Issued(IssuedAmount {
+///         value: IssuedValue::from_decimal_string("100")?,
+///         currency: CurrencyCode::from_ascii("USD")?,
+///         issuer,
+///     }))
+///     .trading_fee(500) // 0.5% fee (in basis points, max 1000)
+///     .build()?;
+/// # Ok(())
+/// # }
+/// ```
 #[derive(Debug, Clone, Default)]
 pub struct AmmCreateBuilder {
     common: CommonBuilder,

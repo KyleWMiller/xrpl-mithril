@@ -20,6 +20,75 @@ const ARRAY_END_MARKER_FC: u16 = 1;
 /// The binary data should be the canonical encoding of the outer object
 /// (no surrounding field header or end marker for the root object).
 ///
+/// # Examples
+///
+/// Round-trip a Payment transaction through serialize then deserialize:
+///
+/// ```
+/// use serde_json::json;
+/// use xrpl_codec::serializer::serialize_json_object;
+/// use xrpl_codec::deserializer::deserialize_object;
+///
+/// let tx = json!({
+///     "TransactionType": "Payment",
+///     "Flags": 0u32,
+///     "Sequence": 1u32,
+///     "Fee": "12",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Destination": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+///     "Amount": "1000000"
+/// });
+///
+/// // Serialize to binary
+/// let map = tx.as_object().expect("json object");
+/// let mut buf = Vec::new();
+/// serialize_json_object(map, &mut buf, false)?;
+///
+/// // Deserialize back to JSON
+/// let decoded = deserialize_object(&buf)?;
+///
+/// // TransactionType is resolved from numeric code to string name
+/// assert_eq!(decoded.get("TransactionType").and_then(|v| v.as_str()), Some("Payment"));
+/// assert_eq!(decoded.get("Sequence").and_then(|v| v.as_u64()), Some(1));
+/// assert_eq!(decoded.get("Fee").and_then(|v| v.as_str()), Some("12"));
+/// assert_eq!(
+///     decoded.get("Account").and_then(|v| v.as_str()),
+///     Some("rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh")
+/// );
+/// assert_eq!(decoded.get("Amount").and_then(|v| v.as_str()), Some("1000000"));
+/// # Ok::<(), xrpl_codec::error::CodecError>(())
+/// ```
+///
+/// Deserialize a transaction with an IOU amount:
+///
+/// ```
+/// use serde_json::json;
+/// use xrpl_codec::serializer::serialize_json_object;
+/// use xrpl_codec::deserializer::deserialize_object;
+///
+/// let tx = json!({
+///     "TransactionType": "Payment",
+///     "Sequence": 1u32,
+///     "Fee": "12",
+///     "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+///     "Amount": {
+///         "value": "1.5",
+///         "currency": "USD",
+///         "issuer": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh"
+///     }
+/// });
+///
+/// let map = tx.as_object().expect("json object");
+/// let mut buf = Vec::new();
+/// serialize_json_object(map, &mut buf, false)?;
+///
+/// let decoded = deserialize_object(&buf)?;
+/// let amount = decoded.get("Amount").and_then(|v| v.as_object()).expect("amount object");
+/// assert_eq!(amount.get("value").and_then(|v| v.as_str()), Some("1.5"));
+/// assert_eq!(amount.get("currency").and_then(|v| v.as_str()), Some("USD"));
+/// # Ok::<(), xrpl_codec::error::CodecError>(())
+/// ```
+///
 /// # Errors
 ///
 /// Returns [`CodecError`] if the binary data is malformed.
