@@ -16,5 +16,8 @@ serde_json = { workspace = true }
 thiserror = { workspace = true }
 bitflags = { workspace = true }
 
+[dev-dependencies]
+xrpl-codec = { workspace = true }
+
 [lints]
 workspace = true

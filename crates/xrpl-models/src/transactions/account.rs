@@ -30,6 +30,10 @@ pub struct SignerEntry {
     pub signer_weight: u16,
 }
 
+impl crate::serde_helpers::StArrayElement for SignerEntry {
+    const WRAPPER_KEY: &'static str = "SignerEntry";
+}
+
 // ---------------------------------------------------------------------------
 // AccountSet — TransactionType = 3
 // ---------------------------------------------------------------------------
@@ -174,7 +178,7 @@ pub struct SignerListSet {
     /// Array of [`SignerEntry`] objects indicating the accounts and weights
     /// in the signer list. Omit when deleting the signer list.
     #[serde(rename = "SignerEntries", default, skip_serializing_if = "Option::is_none")]
-    pub signer_entries: Option<Vec<SignerEntry>>,
+    pub signer_entries: Option<crate::serde_helpers::StArray<SignerEntry>>,
 }
 
 // ---------------------------------------------------------------------------

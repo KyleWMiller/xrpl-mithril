@@ -10,6 +10,32 @@
 use serde::{Deserialize, Serialize};
 use xrpl_types::{AccountId, Hash256, IssuedAmount, Issue};
 
+use crate::serde_helpers::{StArray, StArrayElement};
+
+/// A single vote entry in an AMM's trading fee voting slots.
+///
+/// Represents one LP token holder's vote for the trading fee. Up to 8
+/// vote entries are tracked per AMM. Votes are weighted by the voter's
+/// LP token balance.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct VoteEntry {
+    /// The account that cast this vote.
+    #[serde(rename = "Account")]
+    pub account: AccountId,
+
+    /// The trading fee this account voted for, in units of 1/100,000.
+    #[serde(rename = "TradingFee")]
+    pub trading_fee: u16,
+
+    /// The voter's LP token balance weight at the time of the vote.
+    #[serde(rename = "VoteWeight")]
+    pub vote_weight: u32,
+}
+
+impl StArrayElement for VoteEntry {
+    const WRAPPER_KEY: &'static str = "VoteEntry";
+}
+
 /// An AMM (Automated Market Maker) ledger entry.
 ///
 /// Represents an AMM instance with a pool of two assets, an LP token,
@@ -52,11 +78,11 @@ pub struct Amm {
     #[serde(rename = "TradingFee")]
     pub trading_fee: u16,
 
-    /// The current votes for the trading fee, represented as a list
-    /// of vote entries. Uses `serde_json::Value` for the complex nested
-    /// structure.
+    /// The current votes for the trading fee, represented as a list of
+    /// [`VoteEntry`] objects (up to 8). Each entry records one LP token
+    /// holder's fee vote and their voting weight.
     #[serde(rename = "VoteSlots", default, skip_serializing_if = "Option::is_none")]
-    pub vote_slots: Option<Vec<serde_json::Value>>,
+    pub vote_slots: Option<StArray<VoteEntry>>,
 
     /// A hint indicating which page of the AMM account's owner directory
     /// links to this object.
@@ -72,6 +98,42 @@ pub struct Amm {
 mod tests {
     use super::*;
     use serde_json::json;
+
+    #[test]
+    fn deserialize_amm_with_vote_slots() {
+        let json = json!({
+            "LedgerEntryType": "AMM",
+            "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+            "Asset": {"currency": "XRP"},
+            "Asset2": {"currency": "USD", "issuer": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe"},
+            "LPTokenBalance": {
+                "value": "1000",
+                "currency": "USD",
+                "issuer": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe"
+            },
+            "TradingFee": 500,
+            "VoteSlots": [
+                {"VoteEntry": {
+                    "Account": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+                    "TradingFee": 600,
+                    "VoteWeight": 50000
+                }},
+                {"VoteEntry": {
+                    "Account": "rPT1Sjq2YGrBMTttX4GZHjKu9dyfzbpAYe",
+                    "TradingFee": 400,
+                    "VoteWeight": 30000
+                }}
+            ],
+            "index": "2B6AC232AA4C4BE41BF49D2459FA4A0347E1B543A4C92FCEE0821C0201E2E9A8"
+        });
+
+        let entry: Amm = serde_json::from_value(json).expect("should deserialize");
+        let slots = entry.vote_slots.expect("should have vote slots");
+        assert_eq!(slots.len(), 2);
+        assert_eq!(slots[0].trading_fee, 600);
+        assert_eq!(slots[0].vote_weight, 50000);
+        assert_eq!(slots[1].trading_fee, 400);
+    }
 
     #[test]
     fn deserialize_amm() {

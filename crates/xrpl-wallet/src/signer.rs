@@ -52,6 +52,11 @@ pub struct Signer {
 /// `Account`, `Fee`, and `Sequence`), signs it, and returns a [`SignedTransaction`]
 /// with the signature fields attached and the transaction ID computed.
 ///
+/// `SigningPubKey` is added to the transaction **before** computing the signature,
+/// because it is a signing field (`isSigningField=true`) and must be included in
+/// the data that is signed. This matches the behavior of xrpl.js, xrpl-py, and
+/// rippled's own signing logic.
+///
 /// # Errors
 ///
 /// Returns [`WalletError`] if signing or serialization fails.
@@ -59,14 +64,18 @@ pub fn sign(
     tx: &Map<String, Value>,
     wallet: &Wallet,
 ) -> Result<SignedTransaction, WalletError> {
-    let signature = compute_signature(tx, wallet)?;
+    validate_for_single_sign(tx)?;
 
-    // Build the signed transaction JSON
+    // Add SigningPubKey BEFORE computing the signature, because it is a signing
+    // field (isSigningField=true) and must be part of the signed data.
     let mut signed_tx = tx.clone();
     signed_tx.insert(
         "SigningPubKey".into(),
         Value::String(wallet.public_key_hex()),
     );
+
+    let signature = compute_signature(&signed_tx, wallet)?;
+
     signed_tx.insert(
         "TxnSignature".into(),
         Value::String(hex::encode_upper(&signature)),
@@ -91,7 +100,9 @@ pub fn sign(
 ///
 /// In multi-signing, each signer signs a variant of the transaction that
 /// includes their account ID in the hash. The outer transaction's
-/// `SigningPubKey` is set to an empty string.
+/// `SigningPubKey` is set to an empty string (per the XRPL protocol), and
+/// this empty value is included in the signed data because `SigningPubKey`
+/// is a signing field.
 ///
 /// # Errors
 ///
@@ -100,8 +111,16 @@ pub fn multi_sign(
     tx: &Map<String, Value>,
     wallet: &Wallet,
 ) -> Result<Signer, WalletError> {
+    validate_for_signing(tx)?;
+
     let account_id = wallet.account_id();
-    let signature = compute_multi_signature(tx, wallet, account_id.as_bytes())?;
+
+    // Multi-signed transactions have an empty SigningPubKey in the outer tx.
+    // It must be present (not absent) because it is a signing field.
+    let mut multi_tx = tx.clone();
+    multi_tx.insert("SigningPubKey".into(), Value::String(String::new()));
+
+    let signature = compute_multi_signature(&multi_tx, wallet, account_id.as_bytes())?;
 
     Ok(Signer {
         account: wallet.classic_address().to_string(),
@@ -157,6 +176,45 @@ pub fn combine_signatures(
         tx_blob,
         hash,
     })
+}
+
+// ---------------------------------------------------------------------------
+// Pre-signing validation
+// ---------------------------------------------------------------------------
+
+/// Validate that a transaction JSON map has the minimum required fields for
+/// signing and is not already signed.
+fn validate_for_signing(tx: &Map<String, Value>) -> Result<(), WalletError> {
+    for field in ["TransactionType", "Account", "Fee"] {
+        if !tx.contains_key(field) {
+            return Err(WalletError::SigningFailed(format!(
+                "transaction missing required field '{field}'"
+            )));
+        }
+    }
+
+    if tx.contains_key("TxnSignature") {
+        return Err(WalletError::SigningFailed(
+            "transaction already has 'TxnSignature' — cannot re-sign. \
+             Use the original unsigned transaction instead."
+                .into(),
+        ));
+    }
+
+    Ok(())
+}
+
+/// Validate specifically for single-sign (rejects multi-sign artifacts).
+fn validate_for_single_sign(tx: &Map<String, Value>) -> Result<(), WalletError> {
+    validate_for_signing(tx)?;
+
+    if tx.contains_key("Signers") {
+        return Err(WalletError::SigningFailed(
+            "transaction has 'Signers' array — use multi_sign() instead".into(),
+        ));
+    }
+
+    Ok(())
 }
 
 // ---------------------------------------------------------------------------
@@ -323,5 +381,72 @@ mod tests {
         let first_account = signers[0]["Signer"]["Account"].as_str().expect("str");
         let second_account = signers[1]["Signer"]["Account"].as_str().expect("str");
         assert!(first_account <= second_account);
+    }
+
+    // -----------------------------------------------------------------------
+    // Pre-signing validation tests
+    // -----------------------------------------------------------------------
+
+    #[test]
+    fn sign_rejects_missing_transaction_type() {
+        let wallet = genesis_wallet();
+        let mut tx = sample_payment();
+        tx.remove("TransactionType");
+        let err = sign(&tx, &wallet).unwrap_err();
+        assert!(err.to_string().contains("TransactionType"));
+    }
+
+    #[test]
+    fn sign_rejects_missing_account() {
+        let wallet = genesis_wallet();
+        let mut tx = sample_payment();
+        tx.remove("Account");
+        let err = sign(&tx, &wallet).unwrap_err();
+        assert!(err.to_string().contains("Account"));
+    }
+
+    #[test]
+    fn sign_rejects_missing_fee() {
+        let wallet = genesis_wallet();
+        let mut tx = sample_payment();
+        tx.remove("Fee");
+        let err = sign(&tx, &wallet).unwrap_err();
+        assert!(err.to_string().contains("Fee"));
+    }
+
+    #[test]
+    fn sign_rejects_already_signed() {
+        let wallet = genesis_wallet();
+        let mut tx = sample_payment();
+        tx.insert("TxnSignature".into(), Value::String("DEADBEEF".into()));
+        let err = sign(&tx, &wallet).unwrap_err();
+        assert!(err.to_string().contains("TxnSignature"));
+    }
+
+    #[test]
+    fn sign_rejects_signers_present() {
+        let wallet = genesis_wallet();
+        let mut tx = sample_payment();
+        tx.insert("Signers".into(), Value::Array(vec![]));
+        let err = sign(&tx, &wallet).unwrap_err();
+        assert!(err.to_string().contains("Signers"));
+    }
+
+    #[test]
+    fn multi_sign_rejects_already_signed() {
+        let wallet = genesis_wallet();
+        let mut tx = sample_payment();
+        tx.insert("TxnSignature".into(), Value::String("DEADBEEF".into()));
+        let err = multi_sign(&tx, &wallet).unwrap_err();
+        assert!(err.to_string().contains("TxnSignature"));
+    }
+
+    #[test]
+    fn multi_sign_allows_no_signers() {
+        // multi_sign should NOT reject a tx without Signers (that's the normal case)
+        let wallet = genesis_wallet();
+        let tx = sample_payment();
+        let result = multi_sign(&tx, &wallet);
+        assert!(result.is_ok());
     }
 }

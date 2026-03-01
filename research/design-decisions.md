@@ -1,6 +1,6 @@
-# Architecture Decision Record — xrpl-oxide
+# Architecture Decision Record — xrpl-mithril
 
-This document captures key architectural decisions for the xrpl-oxide project. Each decision follows a structured template to preserve context, alternatives considered, and consequences.
+This document captures key architectural decisions for the xrpl-mithril project. Each decision follows a structured template to preserve context, alternatives considered, and consequences.
 
 Decisions are numbered sequentially and should not be renumbered. Superseded decisions get their status updated to "Superseded by ADR-XX" rather than being deleted.
 

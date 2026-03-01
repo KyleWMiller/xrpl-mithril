@@ -1,7 +1,7 @@
-//! xrpl-oxide — A next-generation, pure Rust SDK for the XRP Ledger.
+//! xrpl-mithril — A next-generation, pure Rust SDK for the XRP Ledger.
 //!
 //! This is the facade crate that re-exports all sub-crates for convenience.
-//! Users can depend on just `xrpl-oxide` to get everything, or pick individual
+//! Users can depend on just `xrpl-mithril` to get everything, or pick individual
 //! crates for a smaller dependency footprint.
 //!
 //! # Crate Organization

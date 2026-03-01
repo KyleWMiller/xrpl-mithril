@@ -30,6 +30,10 @@ pub struct SignerEntry {
     pub wallet_locator: Option<Hash256>,
 }
 
+impl crate::serde_helpers::StArrayElement for SignerEntry {
+    const WRAPPER_KEY: &'static str = "SignerEntry";
+}
+
 /// A SignerList ledger entry.
 ///
 /// Defines the multi-signing configuration for an account: which accounts
@@ -61,7 +65,7 @@ pub struct SignerList {
 
     /// The list of authorized signers and their weights.
     #[serde(rename = "SignerEntries")]
-    pub signer_entries: Vec<SignerEntry>,
+    pub signer_entries: crate::serde_helpers::StArray<SignerEntry>,
 
     /// The identifying hash of the transaction that most recently modified
     /// this object.

@@ -41,6 +41,16 @@ impl FieldDef {
 // Include the generated constants, lookup functions, etc.
 include!(concat!(env!("OUT_DIR"), "/generated_definitions.rs"));
 
+/// Check if a field name corresponds to a signing field.
+///
+/// Returns `true` if the field exists in definitions and has
+/// `is_signing_field == true`. Returns `false` if the field is unknown
+/// or is not a signing field.
+#[must_use]
+pub fn is_signing_field(name: &str) -> bool {
+    field_by_name(name).is_some_and(|def| def.is_signing_field)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

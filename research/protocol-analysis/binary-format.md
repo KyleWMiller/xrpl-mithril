@@ -1,6 +1,6 @@
 # XRPL Binary Serialization Format
 
-> Reference document for xrpl-oxide codec implementation.
+> Reference document for xrpl-mithril codec implementation.
 > All field codes, type codes, and properties are verified against the live
 > `crates/xrpl-codec/src/definitions.json` file in this repository.
 
@@ -1070,7 +1070,7 @@ Header: [0x01, 0x1A]
 |   25 | XChainBridge   | Variable   | No         | Composite                 |
 |   26 | Currency       | 20 bytes   | No         | Bare currency code        |
 
-## Appendix B: Implementation Notes for xrpl-oxide
+## Appendix B: Implementation Notes for xrpl-mithril
 
 ### Field ID Computation
 

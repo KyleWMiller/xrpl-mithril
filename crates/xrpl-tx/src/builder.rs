@@ -63,7 +63,7 @@ impl CommonBuilder {
             flags: self.flags,
             last_ledger_sequence: self.last_ledger_sequence,
             account_txn_id: None,
-            memos: self.memos,
+            memos: self.memos.map(Into::into),
             network_id: self.network_id,
             source_tag: self.source_tag,
             signing_pub_key: None,

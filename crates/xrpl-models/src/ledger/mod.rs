@@ -28,7 +28,7 @@ pub mod signer_list;
 
 // Re-export all ledger entry types for convenience.
 pub use account_root::AccountRoot;
-pub use amm::Amm;
+pub use amm::{Amm, VoteEntry};
 pub use check::Check;
 pub use credential::Credential;
 pub use deposit_preauth::DepositPreauth;

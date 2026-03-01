@@ -1,0 +1,101 @@
+[package]
+name = "xrpl-mithril"
+version = "0.1.0-alpha.1"
+description = "A next-generation, pure Rust SDK for the XRP Ledger"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[features]
+default = ["pure-rust-crypto"]
+pure-rust-crypto = ["xrpl-wallet/pure-rust-crypto"]
+native-crypto = ["xrpl-wallet/native-crypto"]
+
+[dependencies]
+xrpl-types = { workspace = true }
+xrpl-codec = { workspace = true }
+xrpl-models = { workspace = true }
+xrpl-wallet = { workspace = true }
+xrpl-client = { workspace = true }
+xrpl-tx = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true }
+reqwest = { workspace = true }
+serde_json = { workspace = true }
+serde = { workspace = true }
+futures = { workspace = true }
+
+[[example]]
+name = "account_info"
+path = "../../examples/account_info.rs"
+
+[[example]]
+name = "basic_payment"
+path = "../../examples/basic_payment.rs"
+
+[[example]]
+name = "subscribe_ledger"
+path = "../../examples/subscribe_ledger.rs"
+
+[[example]]
+name = "token_escrow"
+path = "../../examples/token_escrow.rs"
+
+[[example]]
+name = "mpt_operations"
+path = "../../examples/mpt_operations.rs"
+
+[[example]]
+name = "trustline_payment"
+path = "../../examples/trustline_payment.rs"
+
+[[example]]
+name = "did_operations"
+path = "../../examples/did_operations.rs"
+
+[[example]]
+name = "clawback"
+path = "../../examples/clawback.rs"
+
+[[example]]
+name = "credentials"
+path = "../../examples/credentials.rs"
+
+[[example]]
+name = "check_operations"
+path = "../../examples/check_operations.rs"
+
+[[example]]
+name = "dex_offers"
+path = "../../examples/dex_offers.rs"
+
+[[example]]
+name = "price_oracle"
+path = "../../examples/price_oracle.rs"
+
+[[example]]
+name = "payment_channels"
+path = "../../examples/payment_channels.rs"
+
+[[example]]
+name = "nft_lifecycle"
+path = "../../examples/nft_lifecycle.rs"
+
+[[example]]
+name = "multi_sign"
+path = "../../examples/multi_sign.rs"
+
+[[example]]
+name = "token_escrow_mpt"
+path = "../../examples/token_escrow_mpt.rs"
+
+[[example]]
+name = "amm_lifecycle"
+path = "../../examples/amm_lifecycle.rs"
+
+[lints]
+workspace = true

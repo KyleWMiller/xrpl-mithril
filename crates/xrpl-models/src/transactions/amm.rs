@@ -28,6 +28,10 @@ pub struct AuthAccount {
     pub account: AccountId,
 }
 
+impl crate::serde_helpers::StArrayElement for AuthAccount {
+    const WRAPPER_KEY: &'static str = "AuthAccount";
+}
+
 // ---------------------------------------------------------------------------
 // AMMCreate — TransactionType = 35
 // ---------------------------------------------------------------------------
@@ -249,7 +253,7 @@ pub struct AMMBid {
     /// Up to 4 additional accounts authorized to trade at the discounted fee
     /// for the duration of the auction slot.
     #[serde(rename = "AuthAccounts", default, skip_serializing_if = "Option::is_none")]
-    pub auth_accounts: Option<Vec<AuthAccount>>,
+    pub auth_accounts: Option<crate::serde_helpers::StArray<AuthAccount>>,
 }
 
 // ---------------------------------------------------------------------------

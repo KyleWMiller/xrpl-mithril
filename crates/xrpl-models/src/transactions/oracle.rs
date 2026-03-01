@@ -13,41 +13,10 @@
 
 use serde::{Deserialize, Serialize};
 use xrpl_types::Blob;
-use xrpl_types::currency::CurrencyCode;
 
-// ---------------------------------------------------------------------------
-// PriceData — inner object for OracleSet
-// ---------------------------------------------------------------------------
-
-/// A single price data entry within an oracle's price data series.
-///
-/// Each entry represents the price of a `base_asset` denominated in a
-/// `quote_asset`. The actual price is `asset_price * 10^(-scale)`.
-///
-/// For example, if `asset_price = 12345` and `scale = 2`, the price is 123.45.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct PriceData {
-    /// The asset whose price is being quoted.
-    #[serde(rename = "BaseAsset")]
-    pub base_asset: CurrencyCode,
-
-    /// The asset in which the price is denominated.
-    #[serde(rename = "QuoteAsset")]
-    pub quote_asset: CurrencyCode,
-
-    /// The scaled integer price of the base asset.
-    ///
-    /// The real price is `asset_price * 10^(-scale)`. Omit to delete this
-    /// asset pair from the oracle.
-    #[serde(rename = "AssetPrice", default, skip_serializing_if = "Option::is_none")]
-    pub asset_price: Option<u64>,
-
-    /// The scaling exponent for `asset_price`.
-    ///
-    /// The real price is `asset_price * 10^(-scale)`. Valid range: 0-10.
-    #[serde(rename = "Scale", default, skip_serializing_if = "Option::is_none")]
-    pub scale: Option<u8>,
-}
+// Re-export PriceData from the canonical ledger definition.
+// The same type is used in both OracleSet transactions and Oracle ledger entries.
+pub use crate::ledger::oracle::PriceData;
 
 // ---------------------------------------------------------------------------
 // OracleSet — TransactionType = 51
@@ -104,12 +73,8 @@ pub struct OracleSet {
     /// Each entry contains a base/quote asset pair and a scaled price.
     /// Maximum 10 entries per oracle. When updating, this replaces the
     /// entire price data series.
-    #[serde(
-        rename = "PriceDataSeries",
-        default,
-        skip_serializing_if = "Option::is_none"
-    )]
-    pub price_data_series: Option<Vec<PriceData>>,
+    #[serde(rename = "PriceDataSeries", default, skip_serializing_if = "Option::is_none")]
+    pub price_data_series: Option<crate::serde_helpers::StArray<PriceData>>,
 }
 
 // ---------------------------------------------------------------------------

@@ -248,14 +248,83 @@ fn deserialize_account_id(data: &[u8]) -> Result<(serde_json::Value, usize), Cod
 }
 
 /// Deserialize an Amount (polymorphic: XRP, IOU, or MPT).
+///
+/// The first byte determines the variant:
+/// - bit 7=1 → IOU (48 bytes: 8 value + 20 currency + 20 issuer)
+/// - bit 7=0, bit 5=1 → MPT (33 bytes: 1 flags + 8 value + 24 issuance ID)
+/// - bit 7=0, bit 5=0 → XRP (8 bytes)
 fn deserialize_amount(data: &[u8]) -> Result<(serde_json::Value, usize), CodecError> {
-    ensure_bytes(data, 8)?;
+    ensure_bytes(data, 1)?;
 
     let first_byte = data[0];
-    let is_xrp = (first_byte & 0x80) == 0; // bit 63 = 0 means XRP
+    let is_iou = (first_byte & 0x80) != 0; // bit 7 = 1 means IOU
+    let is_mpt = (first_byte & 0x20) != 0; // bit 5 = 1 means MPT
 
-    if is_xrp {
+    if is_iou {
+        // IOU: 48 bytes total (8 value + 20 currency + 20 issuer)
+        ensure_bytes(data, 48)?;
+
+        let raw = u64::from_be_bytes(data[..8].try_into().map_err(|_| {
+            CodecError::UnexpectedEnd {
+                needed: 8,
+                available: data.len(),
+            }
+        })?);
+
+        // Decode custom float
+        let value_str = decode_iou_value(raw)?;
+
+        // Currency: bytes 8-27
+        let currency_str = decode_currency_code(&data[8..28]);
+
+        // Issuer: bytes 28-47
+        let issuer_address = bs58::encode(&data[28..48])
+            .with_alphabet(bs58::Alphabet::RIPPLE)
+            .with_check_version(0)
+            .into_string();
+
+        let mut map = serde_json::Map::new();
+        map.insert("value".to_string(), serde_json::Value::String(value_str));
+        map.insert("currency".to_string(), serde_json::Value::String(currency_str));
+        map.insert("issuer".to_string(), serde_json::Value::String(issuer_address));
+
+        Ok((serde_json::Value::Object(map), 48))
+    } else if is_mpt {
+        // MPT: 33 bytes total (1 flags + 8 value + 24 MptIssuanceId)
+        // Layout matches rippled STAmount: add8(flags) + add64(value) + addBitString(mptID)
+        ensure_bytes(data, 33)?;
+
+        let positive = (first_byte & 0x40) != 0; // bit 6 = sign
+
+        // Reconstruct value the same way rippled does:
+        // rippled reads 8 bytes (flags + 7 high value bytes), then 1 more byte,
+        // and combines: mValue = (initial_u64 << 8) | extra_byte
+        // This shifts the flags byte out and gives the full 64-bit value.
+        let initial = u64::from_be_bytes(data[..8].try_into().map_err(|_| {
+            CodecError::UnexpectedEnd {
+                needed: 8,
+                available: data.len(),
+            }
+        })?);
+        let abs_value = (initial << 8) | (data[8] as u64);
+
+        let value: i64 = if positive {
+            abs_value as i64
+        } else {
+            -(abs_value as i64)
+        };
+
+        let mpt_id_hex = hex::encode_upper(&data[9..33]);
+
+        let mut map = serde_json::Map::new();
+        map.insert("value".to_string(), serde_json::Value::String(value.to_string()));
+        map.insert("mpt_issuance_id".to_string(), serde_json::Value::String(mpt_id_hex));
+
+        Ok((serde_json::Value::Object(map), 33))
+    } else {
         // XRP: 8 bytes total
+        ensure_bytes(data, 8)?;
+
         let raw = u64::from_be_bytes(data[..8].try_into().map_err(|_| {
             CodecError::UnexpectedEnd {
                 needed: 8,
@@ -273,67 +342,6 @@ fn deserialize_amount(data: &[u8]) -> Result<(serde_json::Value, usize), CodecEr
         };
 
         Ok((serde_json::Value::String(drops_str), 8))
-    } else {
-        // Check bit 61 for MPT flag
-        let is_mpt = (first_byte & 0x20) != 0; // bit 61 = 1 means MPT
-
-        if is_mpt {
-            // MPT: 32 bytes total (8 value + 24 MptIssuanceId)
-            ensure_bytes(data, 32)?;
-
-            let raw = u64::from_be_bytes(data[..8].try_into().map_err(|_| {
-                CodecError::UnexpectedEnd {
-                    needed: 8,
-                    available: data.len(),
-                }
-            })?);
-
-            let positive = (raw & 0x4000_0000_0000_0000) != 0;
-            let abs_value = raw & 0x1FFF_FFFF_FFFF_FFFF; // bits 60-0
-
-            let value: i64 = if positive {
-                abs_value as i64
-            } else {
-                -(abs_value as i64)
-            };
-
-            let mpt_id_hex = hex::encode_upper(&data[8..32]);
-
-            let mut map = serde_json::Map::new();
-            map.insert("value".to_string(), serde_json::Value::String(value.to_string()));
-            map.insert("mpt_issuance_id".to_string(), serde_json::Value::String(mpt_id_hex));
-
-            Ok((serde_json::Value::Object(map), 32))
-        } else {
-            // IOU: 48 bytes total (8 value + 20 currency + 20 issuer)
-            ensure_bytes(data, 48)?;
-
-            let raw = u64::from_be_bytes(data[..8].try_into().map_err(|_| {
-                CodecError::UnexpectedEnd {
-                    needed: 8,
-                    available: data.len(),
-                }
-            })?);
-
-            // Decode custom float
-            let value_str = decode_iou_value(raw)?;
-
-            // Currency: bytes 8-27
-            let currency_str = decode_currency_code(&data[8..28]);
-
-            // Issuer: bytes 28-47
-            let issuer_address = bs58::encode(&data[28..48])
-                .with_alphabet(bs58::Alphabet::RIPPLE)
-                .with_check_version(0)
-                .into_string();
-
-            let mut map = serde_json::Map::new();
-            map.insert("value".to_string(), serde_json::Value::String(value_str));
-            map.insert("currency".to_string(), serde_json::Value::String(currency_str));
-            map.insert("issuer".to_string(), serde_json::Value::String(issuer_address));
-
-            Ok((serde_json::Value::Object(map), 48))
-        }
     }
 }
 

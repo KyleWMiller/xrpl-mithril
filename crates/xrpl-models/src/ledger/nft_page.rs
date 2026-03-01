@@ -22,6 +22,10 @@ pub struct NfToken {
     pub uri: Option<Blob>,
 }
 
+impl crate::serde_helpers::StArrayElement for NfToken {
+    const WRAPPER_KEY: &'static str = "NFToken";
+}
+
 /// An NFTokenPage ledger entry.
 ///
 /// Contains up to 32 NFTokens owned by a single account. Multiple pages
@@ -38,7 +42,7 @@ pub struct NftTokenPage {
 
     /// The collection of NFTokens contained in this page.
     #[serde(rename = "NFTokens")]
-    pub nftokens: Vec<NfToken>,
+    pub nftokens: crate::serde_helpers::StArray<NfToken>,
 
     /// The locator of the previous page, if this is not the first page.
     #[serde(

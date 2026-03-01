@@ -2603,6 +2603,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "xrpl-mithril"
+version = "0.1.0-alpha.1"
+dependencies = [
+ "futures",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tokio",
+ "xrpl-client",
+ "xrpl-codec",
+ "xrpl-models",
+ "xrpl-tx",
+ "xrpl-types",
+ "xrpl-wallet",
+]
+
+[[package]]
 name = "xrpl-models"
 version = "0.1.0-alpha.1"
 dependencies = [
@@ -2610,19 +2627,8 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror 2.0.18",
- "xrpl-types",
-]
-
-[[package]]
-name = "xrpl-oxide"
-version = "0.1.0-alpha.1"
-dependencies = [
- "xrpl-client",
  "xrpl-codec",
- "xrpl-models",
- "xrpl-tx",
  "xrpl-types",
- "xrpl-wallet",
 ]
 
 [[package]]

@@ -7,14 +7,14 @@ members = [
     "crates/xrpl-wallet",
     "crates/xrpl-client",
     "crates/xrpl-tx",
-    "crates/xrpl-oxide",
+    "crates/xrpl-mithril",
 ]
 
 [workspace.package]
 edition = "2024"
 rust-version = "1.85"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/xrpl-oxide/xrpl-oxide"
+repository = "https://github.com/xrpl-mithril/xrpl-mithril"
 keywords = ["xrpl", "xrp", "blockchain", "crypto", "ledger"]
 categories = ["cryptography::cryptocurrencies", "api-bindings"]
 

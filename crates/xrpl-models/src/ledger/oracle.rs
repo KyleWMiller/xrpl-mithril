@@ -24,15 +24,27 @@ pub struct PriceData {
     #[serde(rename = "QuoteAsset")]
     pub quote_asset: CurrencyCode,
 
-    /// The price of the base asset in terms of the quote asset, represented
-    /// as a string integer. The actual price is `AssetPrice * 10^(-Scale)`.
-    #[serde(rename = "AssetPrice", default, skip_serializing_if = "Option::is_none")]
-    pub asset_price: Option<String>,
+    /// The scaled integer price of the base asset in terms of the quote asset.
+    ///
+    /// The actual price is `asset_price * 10^(-scale)`. Deserializes from
+    /// both JSON numbers and strings (XRPL uses strings for UInt64 fields
+    /// to avoid JavaScript precision loss).
+    #[serde(
+        rename = "AssetPrice",
+        default,
+        skip_serializing_if = "Option::is_none",
+        deserialize_with = "crate::serde_helpers::option_uint64::deserialize"
+    )]
+    pub asset_price: Option<u64>,
 
     /// The scaling factor for the asset price. The actual price is
     /// `AssetPrice * 10^(-Scale)`.
     #[serde(rename = "Scale", default, skip_serializing_if = "Option::is_none")]
     pub scale: Option<u8>,
+}
+
+impl crate::serde_helpers::StArrayElement for PriceData {
+    const WRAPPER_KEY: &'static str = "PriceData";
 }
 
 /// An Oracle ledger entry.
@@ -67,7 +79,7 @@ pub struct Oracle {
 
     /// The array of price data entries for this oracle.
     #[serde(rename = "PriceDataSeries")]
-    pub price_data_series: Vec<PriceData>,
+    pub price_data_series: crate::serde_helpers::StArray<PriceData>,
 
     /// A hint indicating which page of the owner's directory links to this
     /// object.
@@ -95,7 +107,8 @@ mod tests {
     use serde_json::json;
 
     #[test]
-    fn deserialize_oracle() {
+    fn deserialize_oracle_with_string_price() {
+        // XRPL servers return UInt64 fields as strings to avoid JS precision loss.
         let json = json!({
             "LedgerEntryType": "Oracle",
             "Owner": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
@@ -119,6 +132,33 @@ mod tests {
         assert_eq!(entry.ledger_entry_type, "Oracle");
         assert_eq!(entry.last_update_time, 700000000);
         assert_eq!(entry.price_data_series.len(), 1);
-        assert_eq!(entry.price_data_series[0].asset_price, Some("12345".to_string()));
+        assert_eq!(entry.price_data_series[0].asset_price, Some(12345));
+    }
+
+    #[test]
+    fn deserialize_oracle_with_number_price() {
+        // Some contexts (docs, transaction submission) use plain numbers.
+        let json = json!({
+            "LedgerEntryType": "Oracle",
+            "Owner": "rHb9CJAWyB4rj91VRWn96DkukG4bwdtyTh",
+            "Provider": "70726F7669646572",
+            "AssetClass": "63757272656E6379",
+            "LastUpdateTime": 700000000,
+            "PriceDataSeries": [
+                {
+                    "BaseAsset": "USD",
+                    "QuoteAsset": "EUR",
+                    "AssetPrice": 740,
+                    "Scale": 3
+                }
+            ],
+            "PreviousTxnID": "0000000000000000000000000000000000000000000000000000000000000000",
+            "PreviousTxnLgrSeq": 100,
+            "index": "2B6AC232AA4C4BE41BF49D2459FA4A0347E1B543A4C92FCEE0821C0201E2E9A8"
+        });
+
+        let entry: Oracle = serde_json::from_value(json).expect("should deserialize");
+        assert_eq!(entry.price_data_series[0].asset_price, Some(740));
+        assert_eq!(entry.price_data_series[0].scale, Some(3));
     }
 }

@@ -2137,7 +2137,7 @@ created/modified by the transactions above).
 
 ---
 
-## Appendix C: Implementation Priority for xrpl-oxide
+## Appendix C: Implementation Priority for xrpl-mithril
 
 Based on mainnet activation status and ecosystem demand:
 

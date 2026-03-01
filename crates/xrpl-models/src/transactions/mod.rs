@@ -23,6 +23,8 @@ pub mod xchain;
 use serde::{Deserialize, Serialize};
 use xrpl_types::{AccountId, Amount, Blob, Hash256};
 
+use crate::serde_helpers::{StArray, StArrayElement};
+
 // Re-export all transaction types for convenience
 pub use account::{AccountDelete, AccountSet, DepositPreauth, SetRegularKey, SignerListSet, TicketCreate};
 pub use amm::{AMMBid, AMMClawback, AMMCreate, AMMDelete, AMMDeposit, AMMVote, AMMWithdraw};
@@ -169,7 +171,7 @@ pub struct TransactionCommon {
 
     /// Array of memo objects.
     #[serde(rename = "Memos", default, skip_serializing_if = "Option::is_none")]
-    pub memos: Option<Vec<Memo>>,
+    pub memos: Option<StArray<Memo>>,
 
     /// Network ID for non-mainnet chains.
     #[serde(rename = "NetworkID", default, skip_serializing_if = "Option::is_none")]
@@ -197,7 +199,7 @@ pub struct TransactionCommon {
 
     /// Array of multi-sign Signers.
     #[serde(rename = "Signers", default, skip_serializing_if = "Option::is_none")]
-    pub signers: Option<Vec<Signer>>,
+    pub signers: Option<StArray<Signer>>,
 }
 
 /// A memo attached to a transaction.
@@ -216,6 +218,10 @@ pub struct Memo {
     pub memo_format: Option<Blob>,
 }
 
+impl StArrayElement for Memo {
+    const WRAPPER_KEY: &'static str = "Memo";
+}
+
 /// A signer in a multi-signed transaction.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Signer {
@@ -230,6 +236,10 @@ pub struct Signer {
     /// The signer's public key.
     #[serde(rename = "SigningPubKey")]
     pub signing_pub_key: Blob,
+}
+
+impl StArrayElement for Signer {
+    const WRAPPER_KEY: &'static str = "Signer";
 }
 
 /// Helper macro for implementing common() and common_mut() across all variants.

@@ -452,11 +452,13 @@ fn encode_iou_value(field: &str, value_str: &str) -> Result<[u8; 8], CodecError>
     Ok(encoded.to_be_bytes())
 }
 
-/// Serialize MPT amount as 32 bytes.
+/// Serialize MPT amount as 33 bytes.
 ///
-/// Byte 0 bits: bit 7=1 (not XRP), bit 6=sign, bit 5=1 (MPT flag)
-/// Bytes 0-7: 64-bit value with sign flags
-/// Bytes 8-31: MptIssuanceId (24 bytes)
+/// Layout (matching rippled's STAmount serialization):
+/// - Byte 0: flags — bit 5=1 (MPT flag), bit 6=sign (1=positive), bit 7=0
+///   Positive MPT → 0x60, negative MPT → 0x20
+/// - Bytes 1-8: 64-bit absolute value (big-endian)
+/// - Bytes 9-32: MptIssuanceId (24 bytes)
 fn serialize_mpt_amount(
     field: &str,
     map: &serde_json::Map<String, serde_json::Value>,
@@ -474,19 +476,18 @@ fn serialize_mpt_amount(
     let negative = value < 0;
     let abs_value = value.unsigned_abs();
 
-    // Build 8-byte header:
-    // Bit 63: 1 (not XRP)
-    // Bit 62: 1 if positive/zero, 0 if negative
-    // Bit 61: 1 (MPT flag)
-    // Bits 60-0: absolute value
-    let mut encoded: u64 = abs_value & 0x1FFF_FFFF_FFFF_FFFF; // bits 60-0
-    encoded |= 1 << 63; // bit 63: not XRP
+    // 1-byte flags (matches rippled cMPToken>>56 | cPositive>>56):
+    // Bit 5: 1 (MPT flag)
+    // Bit 6: 1 if positive/zero, 0 if negative
+    // Bit 7: 0 (not IOU — MPT shares bit 7=0 with XRP)
+    let mut flags: u8 = 0x20; // MPT flag
     if !negative {
-        encoded |= 1 << 62; // bit 62: positive
+        flags |= 0x40; // positive
     }
-    encoded |= 1 << 61; // bit 61: MPT flag
+    buf.push(flags);
 
-    buf.extend_from_slice(&encoded.to_be_bytes());
+    // 8-byte absolute value
+    buf.extend_from_slice(&abs_value.to_be_bytes());
 
     // MptIssuanceId: 24 bytes
     let id_str = map
