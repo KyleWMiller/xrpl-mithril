@@ -14,7 +14,7 @@ members = [
 edition = "2024"
 rust-version = "1.85"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/xrpl-mithril/xrpl-mithril"
+repository = "https://github.com/KyleWMiller/xrpl-mithril"
 keywords = ["xrpl", "xrp", "blockchain", "crypto", "ledger"]
 categories = ["cryptography::cryptocurrencies", "api-bindings"]
 

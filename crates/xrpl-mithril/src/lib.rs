@@ -1,7 +1,12 @@
 #![doc(html_logo_url = "https://raw.githubusercontent.com/KyleWMiller/xrpl-mithril/main/assets/logo.png")]
+//!
+//! <div align="center">
+//! <img src="https://raw.githubusercontent.com/KyleWMiller/xrpl-mithril/main/assets/logo.png" width="200" alt="xrpl-mithril">
+//!
 //! # xrpl-mithril
 //!
 //! **A next-generation, pure Rust SDK for the XRP Ledger.**
+//! </div>
 //!
 //! xrpl-mithril targets the 2026 XRPL protocol surface (rippled v3.1.0+),
 //! covering 50+ transaction types including Multi-Purpose Tokens, Token Escrow
