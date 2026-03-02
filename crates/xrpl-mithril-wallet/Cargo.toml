@@ -1,7 +1,8 @@
 [package]
 name = "xrpl-mithril-wallet"
-version = "0.5.2"
+version = "0.5.3"
 description = "Key generation, signing, and seed management for the XRP Ledger"
+documentation = "https://docs.rs/xrpl-mithril-wallet"
 readme = "../../README.md"
 edition.workspace = true
 rust-version.workspace = true

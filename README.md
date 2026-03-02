@@ -64,14 +64,14 @@ See [17 runnable examples](examples/) covering payments, escrow, AMM, MPTs, NFTs
 
 ```toml
 [dependencies]
-xrpl-mithril = "0.5.2"
+xrpl-mithril = "0.5.3"
 ```
 
 **With native cryptography backend (for maximum secp256k1 performance):**
 
 ```toml
 [dependencies]
-xrpl-mithril = { version = "0.5.2", features = ["native-crypto"] }
+xrpl-mithril = { version = "0.5.3", features = ["native-crypto"] }
 ```
 
 By default, xrpl-mithril uses pure Rust cryptography (`k256` + `ed25519-dalek`). The `native-crypto` feature swaps in `libsecp256k1` via the `secp256k1` crate for ~2x faster ECDSA signing and verification. Both backends expose the identical API -- switching is a `Cargo.toml` change, not a code change.

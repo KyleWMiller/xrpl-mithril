@@ -20,12 +20,12 @@ categories = ["cryptography::cryptocurrencies", "api-bindings"]
 
 [workspace.dependencies]
 # Internal crates
-xrpl-mithril-types = { version = "0.1.2", path = "crates/xrpl-mithril-types" }
-xrpl-mithril-codec = { version = "0.3.2", path = "crates/xrpl-mithril-codec" }
-xrpl-mithril-models = { version = "0.4.2", path = "crates/xrpl-mithril-models" }
-xrpl-mithril-wallet = { version = "0.5.2", path = "crates/xrpl-mithril-wallet" }
-xrpl-mithril-client = { version = "0.3.2", path = "crates/xrpl-mithril-client" }
-xrpl-mithril-tx = { version = "0.4.2", path = "crates/xrpl-mithril-tx" }
+xrpl-mithril-types = { version = "0.1.3", path = "crates/xrpl-mithril-types" }
+xrpl-mithril-codec = { version = "0.3.3", path = "crates/xrpl-mithril-codec" }
+xrpl-mithril-models = { version = "0.4.3", path = "crates/xrpl-mithril-models" }
+xrpl-mithril-wallet = { version = "0.5.3", path = "crates/xrpl-mithril-wallet" }
+xrpl-mithril-client = { version = "0.3.3", path = "crates/xrpl-mithril-client" }
+xrpl-mithril-tx = { version = "0.4.3", path = "crates/xrpl-mithril-tx" }
 
 # Serialization
 serde = { version = "1", features = ["derive"] }

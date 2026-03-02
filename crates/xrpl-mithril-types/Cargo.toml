@@ -1,7 +1,8 @@
 [package]
 name = "xrpl-mithril-types"
-version = "0.1.2"
+version = "0.1.3"
 description = "Core protocol types for the XRP Ledger (Amount, AccountId, Hash, Currency)"
+documentation = "https://docs.rs/xrpl-mithril-types"
 readme = "../../README.md"
 edition.workspace = true
 rust-version.workspace = true

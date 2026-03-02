@@ -1,7 +1,8 @@
 [package]
 name = "xrpl-mithril-codec"
-version = "0.3.2"
+version = "0.3.3"
 description = "Binary serialization/deserialization for the XRP Ledger protocol"
+documentation = "https://docs.rs/xrpl-mithril-codec"
 readme = "../../README.md"
 edition.workspace = true
 rust-version.workspace = true

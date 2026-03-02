@@ -1,7 +1,8 @@
 [package]
 name = "xrpl-mithril-tx"
-version = "0.4.2"
+version = "0.4.3"
 description = "Transaction building, autofilling, and submission for the XRP Ledger"
+documentation = "https://docs.rs/xrpl-mithril-tx"
 readme = "../../README.md"
 edition.workspace = true
 rust-version.workspace = true

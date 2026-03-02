@@ -74,14 +74,14 @@
 //!
 //! ```toml
 //! [dependencies]
-//! xrpl-mithril = "0.5.2"
+//! xrpl-mithril = "0.5.3"
 //! ```
 //!
 //! **With native cryptography for maximum secp256k1 performance:**
 //!
 //! ```toml
 //! [dependencies]
-//! xrpl-mithril = { version = "0.5.2", features = ["native-crypto"] }
+//! xrpl-mithril = { version = "0.5.3", features = ["native-crypto"] }
 //! ```
 //!
 //! # Feature Flags

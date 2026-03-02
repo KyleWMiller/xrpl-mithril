@@ -1,7 +1,8 @@
 [package]
 name = "xrpl-mithril-client"
-version = "0.3.2"
+version = "0.3.3"
 description = "Network clients (JSON-RPC, WebSocket) for the XRP Ledger"
+documentation = "https://docs.rs/xrpl-mithril-client"
 readme = "../../README.md"
 edition.workspace = true
 rust-version.workspace = true
