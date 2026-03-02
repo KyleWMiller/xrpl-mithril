@@ -1,4 +1,4 @@
-#![doc(html_logo_url = "https://raw.githubusercontent.com/KyleWMiller/xrpl-mithril/main/assets/logo.png")]
+#![doc(html_logo_url = "https://raw.githubusercontent.com/KyleWMiller/xrpl-mithril/main/assets/mithrilLogo.png")]
 //! Network clients for connecting to XRP Ledger nodes.
 //!
 //! This crate provides:

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.png" alt="xrpl-mithril logo" width="200">
+  <img src="assets/mithrilLogo.png" alt="xrpl-mithril logo" width="200">
 </p>
 
 <h1 align="center">xrpl-mithril</h1>

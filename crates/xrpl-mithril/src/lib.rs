@@ -1,7 +1,7 @@
-#![doc(html_logo_url = "https://raw.githubusercontent.com/KyleWMiller/xrpl-mithril/main/assets/logo.png")]
+#![doc(html_logo_url = "https://raw.githubusercontent.com/KyleWMiller/xrpl-mithril/main/assets/mithrilLogo.png")]
 //!
 //! <div align="center">
-//! <img src="https://raw.githubusercontent.com/KyleWMiller/xrpl-mithril/main/assets/logo.png" width="200" alt="xrpl-mithril">
+//! <img src="https://raw.githubusercontent.com/KyleWMiller/xrpl-mithril/main/assets/mithrilLogo.png" width="200" alt="xrpl-mithril">
 //!
 //! # xrpl-mithril
 //!
