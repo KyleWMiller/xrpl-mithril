@@ -1,6 +1,6 @@
 [package]
 name = "xrpl-mithril"
-version = "0.5.1"
+version = "0.5.2"
 description = "A next-generation, pure Rust SDK for the XRP Ledger"
 readme = "../../README.md"
 edition.workspace = true

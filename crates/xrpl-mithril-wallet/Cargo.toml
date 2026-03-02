@@ -1,6 +1,6 @@
 [package]
 name = "xrpl-mithril-wallet"
-version = "0.5.1"
+version = "0.5.2"
 description = "Key generation, signing, and seed management for the XRP Ledger"
 readme = "../../README.md"
 edition.workspace = true

@@ -1,6 +1,6 @@
 [package]
 name = "xrpl-mithril-models"
-version = "0.4.1"
+version = "0.4.2"
 description = "Transaction types, ledger objects, and request/response types for the XRP Ledger"
 readme = "../../README.md"
 edition.workspace = true
